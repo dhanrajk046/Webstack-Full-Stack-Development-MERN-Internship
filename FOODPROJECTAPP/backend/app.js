@@ -1,13 +1,24 @@
+//configure express and Middleware
+
+//import packages
+//create express app
+//             Client => app => route => response
+//configure middleware
+//middleware is the function that runs between the request and response
+//Req => Middleware => Route => res
+//export the app
+
 const express = require("express");
+const app = express()
+// const express = require("express");
+// const app = express();
 
-const app = express();
+const cors = require("cors")
 
-// Middleware
-app.use(express.json());
+app.use(cors());
+app.use(express.json())
 
-// Test Route
-app.get("/", (req, res) => {
-    res.send("Food App API Running 🚀");
-});
+module.exports=app
 
-module.exports = app;
+
+

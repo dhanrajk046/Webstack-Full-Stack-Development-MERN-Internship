@@ -1,15 +1,17 @@
-const app = require("./app");
-const connectDB = require("./config/database");
-const dotenv = require("dotenv");
+// start the Server
 
-// Load environment variables
-dotenv.config({ path: "./config/config.env" });
+// Will load env variable
+// start the Server
 
-// Connect Database
-connectDB();
+const app = require("./app")
 
-const PORT = process.env.PORT || 3000;
+const dotenv = require("dotenv")
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+//load env variable
+dotenv.config({path:"./config/config.env"})
+
+//start Server
+
+app.listen(process.env.PORT, ()=>{
+    console.log(`Server started on PORT: ${process.env.PORT}`)
+})
