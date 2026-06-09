@@ -12,6 +12,8 @@ dotenv.config({path:"./config/config.env"})
 
 //start Server
 
+PORT = process.env.PORT
+
 app.listen(process.env.PORT, ()=>{
     console.log(`Server started on PORT: ${process.env.PORT}`)
 })
