@@ -3,18 +3,18 @@ const mongoose = require("mongoose")
 
 const validator = require("validator")
 
-const bycrypt = require("bycryptjs")
+const bcrypt = require("bcryptjs")
 
 const jwt = require("jsonwebtoken")
 
 const crypto = require("crypto")
-const { type } = require("os")
+// const { type } = require("os")
 const { stringify } = require("querystring")
 
 
 //step 2 create Schema
 
-const userSchema = new mongoose.schema({
+const userSchema = new mongoose.Schema({
     name:{
         type: String,
         required:[true, "please enter your name"],
@@ -52,5 +52,56 @@ const userSchema = new mongoose.schema({
         type:String,
         enum:["user","admin"],
         default: "user"
-    }
+    },
+    avatar:{
+        public_id:String,
+        url: String,
+    },
+    passwordChangedAt:Date,
+    passwordResetToken:String,
+    passwordReserExpires:Date,
+},
+{timestamps:true}
+);
+
+//hash password
+//pre("save") => runs before data is saved
+
+userSchema.pre("save", async function(){
+    if(!this.isModified("password")) return;
+
+    this.password = await bcrypt.hash(this.password, 12)
+    this.passwordConfirm = undefined
 })
+
+//pass compare
+userSchema.methods.corectPassword = async function(
+    candidatePassword, userPassword
+){
+    return await bcrypt.compare(candidatePassword,userPassword)
+    
+}
+
+//checks whether the users apssword was change afeter getting jwt tokens 
+// if yes. the old token is invalid and user must log in again
+userSchema.methods.changepasswordAfter=function(JWTTimestamp){
+    if(this.passwordChangedAt){
+        const changedTimestamp = parseInt(
+            this.passwordChangedAt.gettime()/1000,10
+        )
+        return JWTTimestamp < changedTimestamp
+    }
+    return false;
+}
+
+//custom method to generate the jwt token
+userSchema.methods.getJWTToken = function(){
+    return jwt.sign(
+        {id:this._id},
+        process.env.JWT_SECRETS,
+        {expiresIn: process.env.JWT_EXPIRES}
+    )
+}
+
+module.exports = mongoose.model("User", userSchema)
+

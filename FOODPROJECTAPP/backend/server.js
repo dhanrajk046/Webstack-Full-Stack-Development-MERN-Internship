@@ -1,19 +1,44 @@
-// start the Server
+// const dotenv = require("dotenv");
 
-// Will load env variable
-// start the Server
+// // 1. Load environment variables FIRST before requiring other files
+// dotenv.config({ path: "./config/config.env" });
 
-const app = require("./app")
+// // 2. Now import app and database connection configurations
+// const app = require("./app");
+// const connectDB = require("./config/database");
 
-const dotenv = require("dotenv")
+// // 3. Connect to MongoDB Atlas
+// connectDB();
 
-//load env variable
-dotenv.config({path:"./config/config.env"})
+// // 4. Start the Express Server
+// const PORT = process.env.PORT || 8000;
 
-//start Server
+// app.listen(PORT, () => {
+//   console.log(`Server started on PORT: ${PORT}`);
+// });
 
-PORT = process.env.PORT
+const dotenv = require("dotenv");
 
-app.listen(process.env.PORT, ()=>{
-    console.log(`Server started on PORT: ${process.env.PORT}`)
-})
+// 1. Load environment variables first
+dotenv.config({ path: "./config/config.env" });
+
+const app = require("./app");
+const connectDB = require("./config/database");
+
+// 2. Wrap server initialization in an async function
+const startServer = async () => {
+    try {
+        // Force the app to wait until the DB is fully connected
+        await connectDB();
+        
+        const PORT = process.env.PORT || 8000;
+        app.listen(PORT, () => {
+            console.log(`Server started on PORT: ${PORT} (DB fully verified)`);
+        });
+    } catch (error) {
+        console.error("Critical Server Startup Failure:", error.message);
+        process.exit(1);
+    }
+};
+
+startServer();
