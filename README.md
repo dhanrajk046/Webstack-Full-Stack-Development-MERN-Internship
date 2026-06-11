@@ -1,4 +1,4 @@
-# 🧞‍♂️ Food Genie – Full-Stack Food Delivery Application
+# Food Genie – Full-Stack Food Delivery Application
 
 Food Genie is a robust, responsive **MERN Stack** food aggregation and delivery web application. Developed as a capstone project during the **WebStack Academy (WSA) Full-Stack Web Development Internship**, this application replicates real-world platforms like Swiggy or Zomato, allowing users to effortlessly browse local restaurants, customize orders, manage a live cart, and complete secure payments.
 
