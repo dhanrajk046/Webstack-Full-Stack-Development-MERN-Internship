@@ -48,6 +48,7 @@ const Errorhandler = require("../utils/errorHandler");
 const catchAsyncErrors = require("../middlewares/catchAsyncErrors");
 const sendToken = require("../utils/sendToken");
 const cloudinary = require("../config/cloudinary");
+const ErrorHandler = require("../utils/errorHandler");
 
 console.log("User Model loaded into authController:", User);
 
@@ -93,4 +94,29 @@ exports.signup = catchAsyncErrors(async (req, res, next) => {
 
     // Send JWT token authentication response
     sendToken(user, 201, res);
+});
+
+//login
+// exports.login = catchAsyncErrors{async(req,res,next)=>{
+exports.login = catchAsyncErrors(async(req,res,next)=>{
+
+    const {email, password} = req.body;
+    if(!email || !password){
+        return next(new ErrorHandler("Please enter email and password", 400))
+    }
+
+    const user = await User.findOne({email}).select("+password")
+
+    if(!user){
+        return next(new ErrorHandler("Invalid email or password", 401))
+    }
+
+    const isPasswordMatched = await user.correctPassword(password, user.password)
+    if(!isPasswordMatched){
+        return next(new ErrorHandler("Invalid email or password", 401))
+    }
+
+    sendToken(user, 200, res)
+
+
 });
