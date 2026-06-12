@@ -11,7 +11,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/v1/users", auth);
-app.use("/api/eats/stores", restaurant)
+app.use("/api/v1/eats/stores", restaurant)
 
 app.get("/", (req, res) => {
   res.send("Server is running successfully");
