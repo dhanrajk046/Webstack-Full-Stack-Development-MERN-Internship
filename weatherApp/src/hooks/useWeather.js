@@ -1,55 +1,89 @@
-import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 
 export const useWeather = (lat, lon, cityName) => {
   return useQuery({
-    queryKey: ['weatherData', lat, lon, cityName],
-    queryFn: async () => {
-      // In production, keys are managed via .env variables: import.meta.env.VITE_OPENWEATHER_KEY
-      const OPENWEATHER_KEY = 'YOUR_OPENWEATHER_KEY';
-      const WEATHERAPI_KEY = 'YOUR_WEATHERAPI_KEY';
+    queryKey: ["weatherData", lat, lon, cityName],
 
-      // Safe Check: If keys aren't set up yet, return intelligent simulated data instantly
-      if (OPENWEATHER_KEY === 'YOUR_OPENWEATHER_KEY' || WEATHERAPI_KEY === 'YOUR_WEATHERAPI_KEY') {
-        await new Promise((resolve) => setTimeout(resolve, 600)); // Simulate natural network latency
-        
-        // Generate pseudo-random realistic values based on string length to simulate changes per city
-        const seed = cityName.length;
-        return {
-          current: {
-            temp: 20 + (seed % 15),
-            humidity: 40 + (seed % 45),
-            windSpeed: 5 + (seed % 12),
-            description: seed % 2 === 0 ? 'Clear sky overhead' : 'Scattered ambient clouds',
-          },
-          forecast: [
-            { date: 'Tomorrow', maxTemp: 26, minTemp: 18, condition: 'Sunny' },
-            { date: 'Next Day', maxTemp: 24, minTemp: 17, condition: 'Partly Cloudy' },
-          ]
-        };
+    enabled: !!lat && !!lon && !!cityName,
+
+    queryFn: async () => {
+      const OPENWEATHER_KEY = import.meta.env.VITE_OPENWEATHER_KEY;
+      const WEATHERAPI_KEY = import.meta.env.VITE_WEATHERAPI_KEY;
+
+      if (!OPENWEATHER_KEY) {
+        throw new Error("Missing VITE_OPENWEATHER_KEY");
       }
 
-      // Live Fetching Routing Pipeline
-      const [currentRes, forecastRes] = await Promise.all([
-        axios.get(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${OPENWEATHER_KEY}`),
-        axios.get(`https://api.weatherapi.com/v1/forecast.json?key=${WEATHERAPI_KEY}&q=${cityName}&days=3`)
-      ]);
+      if (!WEATHERAPI_KEY) {
+        throw new Error("Missing VITE_WEATHERAPI_KEY");
+      }
 
-      return {
-        current: {
-          temp: currentRes.data.main.temp,
-          humidity: currentRes.data.main.humidity,
-          windSpeed: currentRes.data.wind.speed,
-          description: currentRes.data.weather[0].description,
-        },
-        forecast: forecastRes.data.forecast.forecastday.map(day => ({
-          date: day.date,
-          maxTemp: day.day.maxtemp_c,
-          minTemp: day.day.mintemp_c,
-          condition: day.day.condition.text,
-        }))
-      };
+      try {
+        // Current Weather
+        const currentRes = await axios.get(
+          "https://api.openweathermap.org/data/2.5/weather",
+          {
+            params: {
+              lat,
+              lon,
+              units: "metric",
+              appid: OPENWEATHER_KEY,
+            },
+          }
+        );
+
+        // Forecast
+        const forecastRes = await axios.get(
+          "https://api.weatherapi.com/v1/forecast.json",
+          {
+            params: {
+              key: WEATHERAPI_KEY,
+              q: cityName,
+              days: 3,
+              aqi: "yes",
+              alerts: "yes",
+            },
+          }
+        );
+
+        console.log("Forecast API Response:", forecastRes.data);
+
+        const forecastData =
+          forecastRes.data?.forecast?.forecastday?.map((day) => ({
+            date: day.date,
+            maxTemp: Math.round(day.day.maxtemp_c),
+            minTemp: Math.round(day.day.mintemp_c),
+            condition: day.day.condition.text,
+          })) || [];
+
+        console.log("Mapped Forecast:", forecastData);
+
+        return {
+          current: {
+            temp: Math.round(currentRes.data.main.temp),
+            humidity: currentRes.data.main.humidity,
+            windSpeed: Math.round(currentRes.data.wind.speed * 3.6),
+            description:
+              currentRes.data.weather?.[0]?.description ||
+              "Unknown weather",
+          },
+
+          forecast: forecastData,
+        };
+      } catch (error) {
+        console.error("WEATHER API ERROR:", error);
+
+        if (error.response) {
+          console.error("Status:", error.response.status);
+          console.error("Response:", error.response.data);
+        }
+
+        throw error;
+      }
     },
-    staleTime: 1000 * 60 * 5, // Cache entries stay fresh for 5 minutes
+
+    staleTime: 1000 * 60 * 5,
+    retry: 1,
   });
 };
