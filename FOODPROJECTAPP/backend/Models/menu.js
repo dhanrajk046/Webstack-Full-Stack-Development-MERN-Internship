@@ -25,5 +25,10 @@ const menuSchema = new mongoose.Schema(
   },
 );
 
-menu = mongoose.model("Menu", menuSchema);
+// ... your schema definitions above ...
+
+// 1. You must define the model and assign it to the variable 'Menu'
+const Menu = mongoose.model('Menu', menuSchema); 
+
+// 2. Then you can export it
 module.exports = Menu;

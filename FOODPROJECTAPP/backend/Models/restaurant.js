@@ -1,75 +1,15 @@
-const mongoose = require("mongoose")
+const mongoose = require('mongoose');
 
 const restaurantSchema = new mongoose.Schema({
-    name:{
-        type:String,
-        required: [true,"Please wnter the restaurant name"],
-        trim: true,
-        maxlength: [100, "Restaurant name cannot be more than 100 chars"]
-    },
-
-    isVeg:{
-        type:Boolean,
-        default:false
-    },
-    address: {
+    // Add your actual database fields here based on your project requirements
+    name: {
         type: String,
-        require:[true, "Please provided address"]
+        required: [true, 'Please enter a restaurant name'],
+        trim: true
     },
-    ratings:{
-        type:Number,
-        default:0
-    },
-    numOfreviews:{
-        type:Number,
-        default:0
-    },
-    location:{
-        type:{
-            type:String,
-            enum:["Point"],
-            required:true,
-        },
-        coordinates:{
-            type:[Number],
-            required:true
-        }
-    },
-    reviews: [
-        {
-            name:{
-                type:String,
-                required:true,
-            },
-            rating:{
-                type:Number,
-                required:true,
-            },
-            Comment:{
-                type:String,
-                required:true,
-            }
-        }
-    ],
-    images:[
-        {
-            public_id:{
-                type:String,
-                required:true
-            },
-            url:{
-                type:String,
-                required:true
-            }
-        }
-    ],
-    createdAT:{
-        type:Date,
-        default:Date.now
-    }
-})
+    // Example fields:
+    // location: { type: String },
+    // cuisine: { type: String }
+}, { timestamps: true });
 
-restaurantSchema.index({location:"2dsphere"});
-restaurantSchema.index({address:"text"})
-
-module.exports = mongoose.model("Restaurant",restaurantSchema)
+module.exports = mongoose.model('Restaurant', restaurantSchema);

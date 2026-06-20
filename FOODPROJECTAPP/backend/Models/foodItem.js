@@ -68,8 +68,8 @@ const foodSchema = new mongoose.Schema({
     },
   ],
   createdA: {
-    type: Data,
-    default: Data.now(),
+    type: Date,
+    default: Date.now(),
   },
 });
 module.exports = mongoose.model("FoodItem", foodSchema);
