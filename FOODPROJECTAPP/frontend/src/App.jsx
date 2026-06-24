@@ -6,14 +6,9 @@ import "react-toastify/dist/ReactToastify.css";
 import Home from "./Components/Home";
 import Header from "./Components/layout/Header";
 import Footer from "./Components/layout/Footer";
-// import Menu from "./Components/Menu";
-
-
-
+import Menu from "./Components/Menu";
 
 function App() {
-
-
   return (
     <>
       <ToastContainer />
@@ -28,9 +23,8 @@ function App() {
                 element={<Home />}
                 exact
               />
-              {/* <Route path="/eats/stores/:id/menus" element={<Menu />} /> */}
 
-              
+              <Route path="/eats/stores/:id/menus" element={<Menu />} />
             </Routes>
           </div>
           <Footer />

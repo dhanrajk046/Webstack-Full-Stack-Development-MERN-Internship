@@ -1,106 +1,93 @@
-import {createSlice} from "@reduxjs/toolkit"
+import { createSlice } from "@reduxjs/toolkit";
 
-//Initialstate
-const Initialstate ={
-    restaurants:[],
-    count:0,
-    loading:false,
-    error:null,
-    showVegOnly:false,
-    pureVegRestaurant:0,
-    creating:false,
-    createError:null,
-    deleting:false,
-    deleteError:null
-}
+// 1. Define the initial state (This fixes the red 'x' error)
+const initialState = {
+  restaurants: [],
+  loading: false,
+  error: null, // Named 'error' to match Home.jsx
+  count: 0,
+  showVegOnly: false,
+};
 
-const restaurantSlice= createSlice({
-    name:"restaurants",
-    initialState,
-    reducers:
-    {
-        //get
-        getRestaurantsRequest:(state)=>{
-            state.loading =true
-        },
-        getRestaurantsSuccess:(state,action)=>{
-            state.loading=false //stop loading,
-            state.restaurants = action.payload.restaurants, //store restaurants list
-            state.count = action.payload.count;
-        },
-        getRestaurantFail:(state,action)=>{
-            state.loading=false,
-            state.errors = action.payload
-        },
+// 2. Create the slice
+const restaurantSlice = createSlice({
+  name: "restaurants",
+  initialState, // This now references the object above
+  reducers: {
+    // ---- GET RESTAURANTS ----
+    getRestaurantsRequest: (state) => {
+      state.loading = true;
+    },
+    getRestaurantsSuccess: (state, action) => {
+      state.loading = false;
+      state.restaurants = action.payload.restaurants;
+      state.count = action.payload.count;
+    },
+    getRestaurantFail: (state, action) => {
+      state.loading = false;
+      state.error = action.payload; 
+    },
 
-        //create 
-        createRestaurantRequest:(state)=>{
-            state.creating = true
-        },
-        createRestaurantSuccess:(state, action)=>{
-            state.creating = false,
-            state.restaurants.push(action.payload),
-            state.count += 1
-        },
-        createRestaurantFail:(state,action)=>{
-            state.creating=false,
-            state.createError = action.payload
-        },
+    // ---- CREATE RESTAURANT ----
+    createRestaurantRequest: (state) => {
+      state.loading = true;
+    },
+    createRestaurantSuccess: (state, action) => {
+      state.loading = false;
+      // If you want to add the new restaurant immediately to the screen:
+      // state.restaurants.push(action.payload);
+    },
+    createRestaurantFail: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
 
-        //delete
-        deleteRestaurantRequest:(state)=>{
-            state.deleting = true
-        },
-        deleteRestaurantSuccess:(state, action)=>{
-            state.deleting = false,
-            state.restaurants = state.rrestaurants.filter(
-                (restaurant) => restaurant._id == action.payload
-            ),
-            state.count -= 1
-        },
-        deleteRestaurantFail:(state,action)=>{
-            state.deleting=false,
-            state.deleteError = action.payload
-        },
+    // ---- DELETE RESTAURANT ----
+    deleteRestaurantRequest: (state) => {
+      state.loading = true;
+    },
+    deleteRestaurantSuccess: (state, action) => {
+      state.loading = false;
+      // Filter out the deleted restaurant immediately from the screen:
+      // state.restaurants = state.restaurants.filter(res => res._id !== action.payload);
+    },
+    deleteRestaurantFail: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
 
-        //sort by ratings
-        sortByRatings:(state)=>{
-            state.restaurants.sort((a,b)=> b.ratings-a.ratings)
-        },
+    // ---- SORTING AND FILTERING ----
+    sortByRatings: (state) => {
+      state.restaurants.sort((a, b) => b.ratings - a.ratings);
+    },
+    sortByReviews: (state) => {
+      state.restaurants.sort((a, b) => b.numOfReviews - a.numOfReviews);
+    },
+    toggleVegOnly: (state) => {
+      state.showVegOnly = !state.showVegOnly;
+    },
+    clearError: (state) => {
+      state.error = null;
+    },
+  },
+});
 
-        //sort by reviews
-        sortByReviews:(state)=>{
-            state.restaurants.sort((a,b)=> b.numOfReviews - a.numOfReviews)
-        },
-
-        //toggle
-        toggleVegOnly:(state)=>{
-            state.showVegOnly = !state.showVegOnly
-        },
-        clearError:(state)=>{
-            state.error= null
-        }
-
-    }
-})
-
+// 3. Export all the actions so you can use them in Home.jsx and restaurantAction.js
 export const {
-    getRestaurantsRequest,
-    getRestaurantsSuccess,
-    getRestaurantFail,
-    
-    createRestaurantRequest,
-    createRestaurantSuccess,
-    createRestaurantFail,
+  getRestaurantsRequest,
+  getRestaurantsSuccess,
+  getRestaurantFail,
+  createRestaurantRequest,
+  createRestaurantSuccess,
+  createRestaurantFail,
+  deleteRestaurantRequest,
+  deleteRestaurantSuccess,
+  deleteRestaurantFail,
+  sortByRatings,
+  sortByReviews,
+  toggleVegOnly, 
+  clearError,
+} = restaurantSlice.actions;
 
-    deleteRestaurantRequest,
-    deleteRestaurantSuccess,
-    deleteRestaurantFail,
-
-    sortByRatings,
-    sortByReviews,
-    showVegOnly,
-    clearError
-} = restaurantSlice.actions
-
-export default restaurantSlice.reducer
+// 4. Export the reducer to be added to your Redux store
+export default restaurantSlice.reducer;

@@ -7,7 +7,17 @@ const Restaurant = require("../models/restaurant");
 // @access  Public
 const getAllRestaurants = async (req, res) => {
   try {
-    const restaurants = await Restaurant.find();
+    // Support a simple keyword search on `name` and `address`
+    const keyword = req.query.keyword
+      ? {
+          $or: [
+            { name: { $regex: req.query.keyword, $options: "i" } },
+            { address: { $regex: req.query.keyword, $options: "i" } },
+          ],
+        }
+      : {};
+
+    const restaurants = await Restaurant.find(keyword);
 
     res.status(200).json({
       success: true,

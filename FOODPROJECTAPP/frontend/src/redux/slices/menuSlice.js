@@ -1,92 +1,92 @@
-// import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 
-// const initialState = {
-//   menus: [],
-//   menuId: null,
+const initialState = {
+  menus: [],
+  menuId: null,
 
-//   loading: false,
-//   error: null,
+  loading: false,
+  error: null,
 
-//   creating: false,
-//   createError: null,
+  creating: false,
+  createError: null,
 
-//   addingItem: false,
-//   addError: null,
-// };
+  addingItem: false,
+  addError: null,
+};
 
-// const menuSlice = createSlice({
-//   name: "menus",
-//   initialState,
+const menuSlice = createSlice({
+  name: "menus",
+  initialState,
 
-//   reducers: {
-//     // GET MENUS
-//     getMenusRequest: (state) => {
-//       state.loading = true;
-//     },
+  reducers: {
+    // GET MENUS
+    getMenusRequest: (state) => {
+      state.loading = true;
+    },
 
-//     getMenusSuccess: (state, action) => {
-//       state.loading = false;
-//       state.menus = action.payload.menu;
-//       state.menuId = action.payload.menuId;
-//     },
+    getMenusSuccess: (state, action) => {
+      state.loading = false;
+      state.menus = action.payload.menu;
+      state.menuId = action.payload.menuId;
+    },
 
-//     getMenusFail: (state, action) => {
-//       state.loading = false;
-//       state.error = action.payload;
-//     },
+    getMenusFail: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
 
-//     // CREATE MENU
-//     createMenuRequest: (state) => {
-//       state.creating = true;
-//     },
+    // CREATE MENU
+    createMenuRequest: (state) => {
+      state.creating = true;
+    },
 
-//     createMenuSuccess: (state, action) => {
-//       state.creating = false;
-//       state.newMenu = action.payload;
-//     },
+    createMenuSuccess: (state, action) => {
+      state.creating = false;
+      state.newMenu = action.payload;
+    },
 
-//     createMenuFail: (state, action) => {
-//       state.creating = false;
-//       state.createError = action.payload;
-//     },
+    createMenuFail: (state, action) => {
+      state.creating = false;
+      state.createError = action.payload;
+    },
 
-//     // ADD ITEM
-//     addItemRequest: (state) => {
-//       state.addingItem = true;
-//     },
+    // ADD ITEM
+    addItemRequest: (state) => {
+      state.addingItem = true;
+    },
 
-//     addItemSuccess: (state, action) => {
-//       state.addingItem = false;
-//       state.updatedMenu = action.payload;
-//     },
+    addItemSuccess: (state, action) => {
+      state.addingItem = false;
+      state.updatedMenu = action.payload;
+    },
 
-//     addItemFail: (state, action) => {
-//       state.addingItem = false;
-//       state.addError = action.payload;
-//     },
+    addItemFail: (state, action) => {
+      state.addingItem = false;
+      state.addError = action.payload;
+    },
 
-//     clearMenuErrors: (state) => {
-//       state.error = null;
-//       state.createError = null;
-//       state.addError = null;
-//     },
-//   },
-// });
+    clearMenuErrors: (state) => {
+      state.error = null;
+      state.createError = null;
+      state.addError = null;
+    },
+  },
+});
 
-// export const {
-//   getMenusRequest,
-//   getMenusSuccess,
-//   getMenusFail,
+export const {
+  getMenusRequest,
+  getMenusSuccess,
+  getMenusFail,
 
-//   createMenuRequest,
-//   createMenuSuccess,
-//   createMenuFail,
+  createMenuRequest,
+  createMenuSuccess,
+  createMenuFail,
 
-//   addItemRequest,
-//   addItemSuccess,
-//   addItemFail,
+  addItemRequest,
+  addItemSuccess,
+  addItemFail,
 
-//   clearMenuErrors,
-// } = menuSlice.actions;
+  clearMenuErrors,
+} = menuSlice.actions;
 
-// export default menuSlice.reducer;
+export default menuSlice.reducer;

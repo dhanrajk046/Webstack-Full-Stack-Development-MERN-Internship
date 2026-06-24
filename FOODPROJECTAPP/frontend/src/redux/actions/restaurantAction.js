@@ -1,5 +1,4 @@
-import restaurant from "../../../../backend/models/restaurant";
-import api from "../../utils/";
+import api from "../../utils/api"; // Make sure this points to your actual api/axios file
 
 import {
   getRestaurantsRequest,
@@ -11,23 +10,21 @@ import {
   deleteRestaurantRequest,
   deleteRestaurantSuccess,
   deleteRestaurantFail,
-  sortByRatings,
-  sortByReviews,
-  showVegOnly,
-  clearError,
 } from "../slices/restaurantSlice";
 
-//get
+// GET RESTAURANTS
 export const getRestaurants =
   (keyword = "") =>
   async (dispatch) => {
     try {
-      dispact(getRestaurantsRequest);
+      dispatch(getRestaurantsRequest());
+
       const { data } = await api.get(`/v1/eats/stores?keyword=${keyword}`);
+      // backend returns { success, count, data }
       dispatch(
         getRestaurantsSuccess({
-          restaurants: data.restaurants,
-          count: data.count,
+          restaurants: data.data || [],
+          count: data.count || (data.data ? data.data.length : 0),
         }),
       );
     } catch (error) {
@@ -37,10 +34,10 @@ export const getRestaurants =
     }
   };
 
-//create
-export const createRestaurant = (restaurant) => async (dispatch) => {
+// CREATE RESTAURANT
+export const createRestaurant = (restaurantData) => async (dispatch) => {
   try {
-    despatch(createRestaurantRequest());
+    dispatch(createRestaurantRequest());
 
     const { data } = await api.post("/v1/eats/stores", restaurantData);
 
@@ -50,14 +47,14 @@ export const createRestaurant = (restaurant) => async (dispatch) => {
       createRestaurantFail(error.response?.data?.message || error.message),
     );
   }
+};
 
-  //delete
-  //create
-export const deleteRestaurant = (restaurant) => async (dispatch) => {
+// DELETE RESTAURANT
+export const deleteRestaurant = (id) => async (dispatch) => {
   try {
-    despatch(deleteRestaurantRequest());
+    dispatch(deleteRestaurantRequest());
 
-    await api.post("/v1/eats/stores/${id}");
+    await api.delete(`/v1/eats/stores/${id}`);
 
     dispatch(deleteRestaurantSuccess(id));
   } catch (error) {
@@ -65,5 +62,4 @@ export const deleteRestaurant = (restaurant) => async (dispatch) => {
       deleteRestaurantFail(error.response?.data?.message || error.message),
     );
   }
-}
 };

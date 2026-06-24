@@ -6,8 +6,13 @@ import "./css/count.css";
 const CountRestaurant = () => {
   const dispatch = useDispatch();
 
-  const { count, pureVegRestaurantsCount, showVegOnly, loading, error } =
-    useSelector((state) => state.restaurants);
+  const { count, showVegOnly, loading, error, restaurants } = useSelector(
+    (state) => state.restaurants,
+  );
+
+  const pureVegRestaurantsCount = Array.isArray(restaurants)
+    ? restaurants.filter((r) => r.isVeg).length
+    : 0;
 
   useEffect(() => {
     dispatch(getRestaurants());
@@ -28,8 +33,8 @@ const CountRestaurant = () => {
                 ? " restaurant"
                 : " restaurants"
               : count === 1
-              ? " restaurant"
-              : " restaurants"}
+                ? " restaurant"
+                : " restaurants"}
           </span>
         </p>
       )}

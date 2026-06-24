@@ -1,111 +1,97 @@
-// import API from "../../utils/api";
+import API from "../../utils/api";
 
-// import {
-//   getMenusRequest,
-//   getMenusSuccess,
-//   getMenusFail,
+import {
+  getMenusRequest,
+  getMenusSuccess,
+  getMenusFail,
+  createMenuRequest,
+  createMenuSuccess,
+  createMenuFail,
+  addItemRequest,
+  addItemSuccess,
+  addItemFail,
+} from "../slices/menuSlice";
 
-//   createMenuRequest,
-//   createMenuSuccess,
-//   createMenuFail,
+// GET MENUS
+export const getMenus = (id) => async (dispatch) => {
+  try {
+    dispatch(getMenusRequest());
 
-//   addItemRequest,
-//   addItemSuccess,
-//   addItemFail,
-// } from "../slices/menuSlice";
+    const response = await API.get(`/v1/eats/stores/${id}/menus`);
 
-// // GET MENUS
-// export const getMenus = (id) => async (dispatch) => {
-//   try {
-//     dispatch(getMenusRequest());
+    let menuData = [];
+    let menuDocId = null;
 
-//     const response = await API.get(
-//       `/v1/eats/stores/${id}/menus`
-//     );
+    if (response.data.data?.length > 0) {
+      menuDocId = response.data.data[0]._id;
+      menuData = response.data.data[0].menu;
+    }
 
-//     let menuData = [];
-//     let menuDocId = null;
+    // no fallback; use backend response
 
-//     if (response.data.data?.length > 0) {
-//       menuDocId = response.data.data[0]._id;
-//       menuData = response.data.data[0].menu;
-//     }
+    dispatch(
+      getMenusSuccess({
+        menu: menuData,
+        menuId: menuDocId,
+      }),
+    );
+  } catch (error) {
+    dispatch(getMenusFail(error.response?.data?.message || error.message));
+  }
+};
 
-//     dispatch(
-//       getMenusSuccess({
-//         menu: menuData,
-//         menuId: menuDocId,
-//       })
-//     );
-//   } catch (error) {
-//     dispatch(
-//       getMenusFail(
-//         error.response?.data?.message || error.message
-//       )
-//     );
-//   }
-// };
+// CREATE MENU
+export const createMenu =
+  ({ restaurantId, category }) =>
+  async (dispatch) => {
+    try {
+      dispatch(createMenuRequest());
 
-// // CREATE MENU
-// export const createMenu =
-//   ({ restaurantId, category }) =>
-//   async (dispatch) => {
-//     try {
-//       dispatch(createMenuRequest());
+      const body = {
+        restaurant: restaurantId,
+        menu: [{ category, items: [] }],
+      };
 
-//       const body = {
-//         restaurant: restaurantId,
-//         menu: [{ category, items: [] }],
-//       };
+      const { data } = await API.post(
+        `/v1/eats/stores/${restaurantId}/menus`,
+        body,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
 
-//       const { data } = await API.post(
-//         `/v1/eats/stores/${restaurantId}/menus`,
-//         body,
-//         {
-//           headers: {
-//             "Content-Type": "application/json",
-//           },
-//         }
-//       );
+      dispatch(createMenuSuccess(data.data));
+    } catch (error) {
+      dispatch(createMenuFail(error.response?.data?.message || error.message));
+    }
+  };
 
-//       dispatch(createMenuSuccess(data.data));
-//     } catch (error) {
-//       dispatch(
-//         createMenuFail(
-//           error.response?.data?.message || error.message
-//         )
-//       );
-//     }
-//   };
+// ADD ITEM
+export const addItemToMenu =
+  ({ menuId, category, foodItemId, restaurantId }) =>
+  async (dispatch) => {
+    try {
+      dispatch(addItemRequest());
 
-// // ADD ITEM
-// export const addItemToMenu =
-//   ({ menuId, category, foodItemId, restaurantId }) =>
-//   async (dispatch) => {
-//     try {
-//       dispatch(addItemRequest());
+      const body = {
+        category,
+        foodItemId,
+      };
 
-//       const body = {
-//         category,
-//         foodItemId,
-//       };
+      const { data } = await API.patch(
+        `/v1/eats/stores/${restaurantId}/menus/${menuId}/addItem`,
+        body,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
 
-//       const { data } = await API.patch(
-//         `/v1/eats/stores/${restaurantId}/menus/${menuId}/addItem`,
-//         body,
-//         {
-//           headers: {
-//             "Content-Type": "application/json",
-//           },
-//         }
-//       );
-
-//       dispatch(addItemSuccess(data.data));
-//     } catch (error) {
-//       dispatch(
-//         addItemFail(
-//           error.response?.data?.message || error.message
-//         )
-//       );
-//     }
-//   };
+      dispatch(addItemSuccess(data.data));
+    } catch (error) {
+      dispatch(addItemFail(error.response?.data?.message || error.message));
+    }
+  };

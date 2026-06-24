@@ -17,6 +17,21 @@ exports.getAllFoodItems = catchAsync(async (req, res, next) => {
   });
 });
 
+// SEARCH FOOD ITEMS (global)
+exports.searchFoodItems = catchAsync(async (req, res, next) => {
+  const keyword = req.query.keyword
+    ? { name: { $regex: req.query.keyword, $options: "i" } }
+    : {};
+
+  const items = await Fooditem.find(keyword).populate("restaurant");
+
+  res.status(200).json({
+    status: "success",
+    results: items.length,
+    data: items,
+  });
+});
+
 // /v1/eats/stores/{store_id}/menus
 exports.createFoodItem = catchAsync(async (req, res, next) => {
   // handle optional imageUrl input by converting to images array
