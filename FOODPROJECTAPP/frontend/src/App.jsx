@@ -15,18 +15,13 @@ function App() {
       <Router>
         <div className="App">
           <Header />
-          <div className="container container-fluids">
+          <main className="container-fluid px-4 py-4">
             <Routes>
-              <Route path="/" element={<Home />} exact />
-              <Route
-                path="/eats/stores/search/:keyword"
-                element={<Home />}
-                exact
-              />
-
+              <Route path="/" element={<Home />} />
+              <Route path="/eats/stores/search/:keyword" element={<Home />} />
               <Route path="/eats/stores/:id/menus" element={<Menu />} />
             </Routes>
-          </div>
+          </main>
           <Footer />
         </div>
       </Router>
