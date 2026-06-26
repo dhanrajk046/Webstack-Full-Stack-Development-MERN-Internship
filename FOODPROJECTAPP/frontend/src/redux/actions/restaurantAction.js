@@ -23,7 +23,7 @@ export const getRestaurants =
       // backend returns { success, count, data }
       dispatch(
         getRestaurantsSuccess({
-          restaurants: data.data || [],
+          restaurants: data.restaurant,
           count: data.count || (data.data ? data.data.length : 0),
         }),
       );
