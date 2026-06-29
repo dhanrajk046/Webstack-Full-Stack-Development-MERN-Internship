@@ -16,7 +16,7 @@ const Header = () => {
 
         {/* search bar and search icon */}
 
-        <div className="col-12 col-md-6 mt-2 mt-md-0">
+        <div className="col-12 col-md-3 mt-2 mt-md-0 ">
           <Routes>
             <Route path="/" element={<Search />} />
             <Route path="/eats/stores/search/:keyword" element={<Search />} />
