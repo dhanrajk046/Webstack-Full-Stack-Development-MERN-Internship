@@ -27,7 +27,7 @@ const Restaurant = ({ restaurant }) => {
   // };
 
   return (
-    <div className="col-12 my-3">
+    <div className="col-12 my-3                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         ">
     <div className="card restaurant-card p-3">
 
   <Link to={`/eats/stores/${restaurant._id}/menus`}>
