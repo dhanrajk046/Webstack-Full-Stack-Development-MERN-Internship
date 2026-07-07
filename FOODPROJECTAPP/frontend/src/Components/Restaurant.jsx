@@ -1,121 +1,78 @@
-import React, { useState,useEffect } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-
 
 const Restaurant = ({ restaurant }) => {
   const [showAI, setShowAI] = useState(false);
 
-  const dispatch = useDispatch();
-
-  // const { isAuthenticated, user } = useSelector(
-  //   (state) => state.auth || {}
-  // );
-
-  // const handleDelete = () => {
-  //   if (!window.confirm("Delete this restaurant?")) return;
-
-  //   dispatch(deleteRestaurant(restaurant._id))
-  //     .unwrap()
-  //     .then(() => {
-  //       // optional: refetch (not needed since we updated state already)
-  //       // dispatch(getRestaurants());
-  //     })
-  //     .catch((err) => {
-  //       alert(err || "Unable to delete");
-  //     });
-  // };
-
   return (
-    <div className="col-12 my-3                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         ">
-    <div className="card restaurant-card p-3">
+    <div className="col-12 my-2">
+      <div className="restaurant-card">
 
-  <Link to={`/eats/stores/${restaurant._id}/menus`}>
-    <img
-      className="restaurant-image"
-      src={restaurant.images?.[0]?.url}
-      alt={restaurant.name}
-    />
-  </Link>
+        {/* Thumbnail */}
+        <Link to={`/eats/stores/${restaurant._id}/menus`} className="d-block flex-shrink-0">
+          <img
+            className="restaurant-image"
+            src={restaurant.images?.[0]?.url || "/images/placeholder.png"}
+            alt={restaurant.name}
+            loading="lazy"
+          />
+        </Link>
 
-  <div className="restaurant-info">
+        {/* Info */}
+        <div className="restaurant-info">
+          <Link to={`/eats/stores/${restaurant._id}/menus`} style={{ textDecoration: "none", color: "inherit" }}>
+            <h4>{restaurant.name}</h4>
+          </Link>
 
-    <h4>{restaurant.name}</h4>
+          <p className="rest_address">{restaurant.address}</p>
 
-    <p className="rest_address">
-      {restaurant.address}
-    </p>
+          {/* Ratings */}
+          <div className="d-flex align-items-center gap-2 mb-1">
+            <div className="rating-outer">
+              <div
+                className="rating-inner"
+                style={{ width: `${(restaurant.ratings / 5) * 100}%` }}
+              />
+            </div>
+            <span className="text-muted" style={{ fontSize: "0.78rem" }}>
+              ({restaurant.numOfReviews} reviews)
+            </span>
+          </div>
 
-    <div className="ratings">
-      <div className="rating-outer">
-        <div
-          className="rating-inner"
-          style={{
-            width: `${(restaurant.ratings / 5) * 100}%`,
-          }}
-        ></div>
-      </div>
-
-      <span>
-        ({restaurant.numOfReviews} Reviews)
-      </span>
-    </div>
-
-    {restaurant.reviewSentiment && (
-  <>
-
-
-    <button
-      className="ai-btn"
-      onClick={() => setShowAI(!showAI)}
-    >
-      {showAI
-        ? "➖ Hide Summary"
-        : "💬 View Review Summary"}
-    </button>
-
-  
-  </>
-)}
-
-  </div>
-
-    {showAI && (
-      <div className="ai-insights-box">
-
-      <div className="ai-status">
-      Review Summary : 
-          😊 <strong>
-            {restaurant.reviewSentiment}
-          </strong>
-       
-        </div>
-
-        <ul>
-          {(restaurant.reviewSummaryBullets || []).map(
-            (point, index) => (
-              <li key={index}>{point}</li>
-            )
+          {/* AI Summary toggle */}
+          {restaurant.reviewSentiment && (
+            <button
+              className="ai-btn"
+              onClick={() => setShowAI(!showAI)}
+              aria-expanded={showAI}
+            >
+              {showAI ? "➖ Hide Summary" : "💬 View Review Summary"}
+            </button>
           )}
-        </ul>
 
-        <div className="mentions">
-          {(restaurant.reviewTopMentions || []).map(
-            (item, index) => (
-              <span
-                key={index}
-                className="mention-tag"
-              >
-                #{item}
-              </span>
-            )
+          {/* AI Insights */}
+          {showAI && (
+            <div className="ai-insights-box mt-2">
+              <div className="ai-status">
+                😊 <strong>{restaurant.reviewSentiment}</strong>
+              </div>
+              {(restaurant.reviewSummaryBullets || []).length > 0 && (
+                <ul className="mb-2 ps-3" style={{ fontSize: "0.82rem" }}>
+                  {restaurant.reviewSummaryBullets.map((point, i) => (
+                    <li key={i}>{point}</li>
+                  ))}
+                </ul>
+              )}
+              <div className="mentions">
+                {(restaurant.reviewTopMentions || []).map((item, i) => (
+                  <span key={i} className="mention-tag">#{item}</span>
+                ))}
+              </div>
+            </div>
           )}
         </div>
 
       </div>
-    )}
-
-</div>
     </div>
   );
 };

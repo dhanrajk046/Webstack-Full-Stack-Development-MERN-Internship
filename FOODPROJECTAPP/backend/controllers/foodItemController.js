@@ -1,6 +1,6 @@
-const Fooditem = require("../models/foodItem");
+const Fooditem = require("../Models/foodItem");
 const ErrorHandler = require("../utils/errorHandler");
-const catchAsync = require("../middlewares/catchAsyncErrors");
+const catchAsync = require("../Middlewares/catchAsyncErrors");
 const APIFeatures = require("../utils/apiFeatures");
 
 exports.getAllFoodItems = catchAsync(async (req, res, next) => {

@@ -15,6 +15,7 @@ import Checkout from "./Components/Checkout";
 import OrderDetails from "./Components/OrderDetails";
 import MyOrders from "./Components/MyOrders";
 import Account from "./Components/Account";
+import Success from "./Components/Success";
 import { loadUser } from "./redux/actions/userActions";
 import { fetchCart } from "./redux/actions/cartActions";
 
@@ -34,11 +35,11 @@ function App() {
 
   return (
     <>
-      <ToastContainer />
+      <ToastContainer position="bottom-right" autoClose={3000} />
       <Router>
-        <div className="App">
+        <div className="App" style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
           <Header />
-          <main className="container-fluid px-4 py-4">
+          <main style={{ flex: 1 }}>
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/users/login" element={<Login />} />
@@ -48,6 +49,7 @@ function App() {
               <Route path="/account" element={<Account />} />
               <Route path="/orders" element={<MyOrders />} />
               <Route path="/orders/:id" element={<OrderDetails />} />
+              <Route path="/success" element={<Success />} />
               <Route path="/eats/stores/search/:keyword" element={<Home />} />
               <Route path="/eats/stores/:id/menus" element={<Menu />} />
             </Routes>

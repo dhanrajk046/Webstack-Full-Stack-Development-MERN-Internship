@@ -2,7 +2,7 @@
 
 const express = require("express");
 const router = express.Router();
-const Restaurant = require("../models/restaurant");
+const Restaurant = require("../Models/restaurant");
 
 router.get("/count", async (req, res) => {
   try {

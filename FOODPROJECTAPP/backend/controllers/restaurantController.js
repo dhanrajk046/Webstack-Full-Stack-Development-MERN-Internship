@@ -1,6 +1,6 @@
 // 1. Import your Restaurant model so you can talk to the database
 // Note: Double check that this path matches your actual file structure
-const Restaurant = require("../models/restaurant");
+const Restaurant = require("../Models/restaurant");
 
 // @desc    Get all restaurants
 // @route   GET /api/restaurants (or whatever your base route is)

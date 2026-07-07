@@ -10,7 +10,7 @@ const {
 } = require("../controllers/foodItemController");
 
 const { protect } = require("../controllers/authController");
-const { authorizeRoles } = require("../middlewares/authorizeRoles");
+const { authorizeRoles } = require("../Middlewares/authorizeRoles");
 router.route("/item").post(protect, authorizeRoles("admin"), createFoodItem);
 
 // Search items globally

@@ -1,4 +1,5 @@
 // server.js
+const path = require("path");
 const app = require("./app");
 const connectDatabase = require("./config/database");
 const dotenv = require("dotenv");
@@ -11,7 +12,7 @@ process.on("uncaughtException", (err) => {
 });
 
 // Setting up config file
-dotenv.config({ path: "./config/config.env" });
+dotenv.config({ path: path.join(__dirname, "config", "config.env") });
 
 // Connecting to database
 connectDatabase();

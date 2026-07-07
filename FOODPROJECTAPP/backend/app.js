@@ -6,7 +6,7 @@ const cookieParser = require("cookie-parser");
 const fileUpload = require("express-fileupload");
 const cors = require("cors");
 
-const errorMiddleware = require("./middlewares/errors");
+const errorMiddleware = require("./Middlewares/errors");
 
 // --- Routes Imports ---
 const foodRouter = require("./routes/foodItem");
@@ -49,7 +49,7 @@ app.get("/api/v1/health", (req, res) => {
 
 // --- View Engine ---
 app.set("view engine", "pug");
-app.set("views", path.join(__dirname, "views"));
+app.set("views", path.join(__dirname, "view"));
 
 // --- 404 Handler ---
 app.use((req, res, next) => {

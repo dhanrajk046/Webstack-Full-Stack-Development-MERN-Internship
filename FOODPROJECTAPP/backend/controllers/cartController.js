@@ -1,6 +1,6 @@
-const Cart = require("../models/cartModel");
-const FoodItem = require("../models/foodItem");
-const Restaurant = require("../models/restaurant");
+const Cart = require("../Models/cartModel");
+const FoodItem = require("../Models/foodItem");
+const Restaurant = require("../Models/restaurant");
 
 async function addItemToCart(req, res) {
   const { foodItemId, restaurantId, quantity } = req.body;

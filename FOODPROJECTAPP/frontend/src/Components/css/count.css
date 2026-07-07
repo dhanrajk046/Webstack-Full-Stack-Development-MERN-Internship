@@ -1,9 +1,19 @@
+/* count.css – merged into App.css design system */
 .NumOfRestro {
-  font-size: 2rem;
-  margin-top: 4%;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #fff;
+  margin: 0;
 }
 
 .Restro {
-  font-size: 1.8rem;
-  margin-top: 4%;
+  font-size: 1.1rem;
+  font-weight: 400;
+  opacity: 0.85;
+  margin-left: 0.3rem;
+}
+
+@media (min-width: 768px) {
+  .NumOfRestro { font-size: 2rem; }
+  .Restro { font-size: 1.5rem; }
 }

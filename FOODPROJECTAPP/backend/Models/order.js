@@ -109,6 +109,7 @@ const orderSchema = mongoose.Schema({
 // Notice we removed `next` from the parameters and the try/catch block.
 // Mongoose handles promises (async/await) automatically!
 orderSchema.pre("save", async function () {
+  if (!this.isNew) return;
   for (const orderItem of this.orderItems) {
     const foodItem = await mongoose
       .model("FoodItem")

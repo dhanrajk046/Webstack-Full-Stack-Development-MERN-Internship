@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
-const Menu = require("../models/menu");
-const FoodItem = require("../models/foodItem");
-const Restaurant = require("../models/restaurant");
+const Menu = require("../Models/menu");
+const FoodItem = require("../Models/foodItem");
+const Restaurant = require("../Models/restaurant");
 const ErrorHandler = require("../utils/errorHandler");
-const catchAsync = require("../middlewares/catchAsyncErrors");
+const catchAsync = require("../Middlewares/catchAsyncErrors");
 
 // ==========================================
 // GET ALL MENUS

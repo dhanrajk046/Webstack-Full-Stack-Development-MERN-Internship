@@ -10,7 +10,7 @@ const {
 } = require("../controllers/menuController");
 
 const { protect } = require("../controllers/authController");
-const { authorizeRoles } = require("../middlewares/authorizeRoles");
+const { authorizeRoles } = require("../Middlewares/authorizeRoles");
 
 router
   .route("/")

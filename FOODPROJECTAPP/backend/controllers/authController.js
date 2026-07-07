@@ -36,6 +36,44 @@
 //         email,
 //         password,
 //         passwordConfirm,
+// //import req package, files
+// const User = require("../models/user");
+
+// console.log("User Model:", User);
+// const Errorhandler = require("../utils/errorHandler")
+// const catchAsyncErrors = require("../middlewares/catchAsyncErrors")
+// const sendToken = require("../utils/sendToken")
+// const cloudinary = require("../config/cloudinary")
+
+// //Signup
+// exports.signup = catchAsyncErrors(async(req,res,next) =>{
+//     const {name,email,password,passwordConfirm,phoneNumber} = req.body;
+
+//     let avatar={}
+//     //avatar not provided
+//     if(!req.body.avatar || req.body.avatar === "/images/images.png"){
+//         avatar = {
+//             public_id: "default",
+//             url: "/images/images.png"
+//         }
+//     }
+//     else{
+//         const result =await cloudinary.uploader.upload(req.body.avatar,{
+//             folder:"avatar",
+//             width:150,
+//             crop:"scale",
+//         })
+//         avatar = {
+//             public_id:result.public_id,
+//             url:result.url
+//         }
+//     }
+
+//     const user = await User.create({
+//         name,
+//         email,
+//         password,
+//         passwordConfirm,
 //         phoneNumber,
 //         avatar
 //     })
@@ -45,11 +83,13 @@
 // Import required packages and files
 const jwt = require("jsonwebtoken");
 const { promisify } = require("util");
-const User = require("../models/user");
+const crypto = require("crypto");
+const User = require("../Models/user");
 const ErrorHandler = require("../utils/errorHandler");
-const catchAsyncErrors = require("../middlewares/catchAsyncErrors");
+const catchAsyncErrors = require("../Middlewares/catchAsyncErrors");
 const sendToken = require("../utils/sendToken");
 const cloudinary = require("../config/cloudinary");
+const Email = require("../utils/email");
 
 // @desc    Register a new user
 // @route   POST /api/v1/users/signup

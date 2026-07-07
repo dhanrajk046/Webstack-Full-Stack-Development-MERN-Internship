@@ -11,7 +11,7 @@ const {
 } = require("../controllers/restaurantController");
 
 const { protect } = require("../controllers/authController");
-const { authorizeRoles } = require("../middlewares/authorizeRoles");
+const { authorizeRoles } = require("../Middlewares/authorizeRoles");
 
 // Assuming menu route is in the same routes folder
 const menuRoutes = require("./menu");

@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCart } from "../redux/actions/cartActions";
 import { placeOrder } from "../redux/actions/orderActions";
+import api from "../utils/api";
 
 const Checkout = () => {
   const dispatch = useDispatch();
@@ -10,6 +11,8 @@ const Checkout = () => {
   const { cartItems = [], restaurant = {} } = useSelector((state) => state.cart || {});
   const { isAuthenticated, user } = useSelector((state) => state.user || {});
   const { loading, error } = useSelector((state) => state.orders || {});
+  const [paymentMethod, setPaymentMethod] = useState("COD");
+  const [isPaying, setIsPaying] = useState(false);
   const [deliveryInfo, setDeliveryInfo] = useState({
     address: "",
     city: "",
@@ -47,9 +50,27 @@ const Checkout = () => {
 
   const submitHandler = async (event) => {
     event.preventDefault();
-    const order = await dispatch(placeOrder(deliveryInfo));
-    if (order?._id) {
-      navigate(`/orders/${order._id}`);
+    if (paymentMethod === "COD") {
+      const order = await dispatch(placeOrder(deliveryInfo));
+      if (order?._id) {
+        navigate(`/orders/${order._id}`);
+      }
+    } else {
+      try {
+        setIsPaying(true);
+        const { data } = await api.post("/v1/payment/process", {
+          items: cartItems,
+        });
+        if (data?.url) {
+          window.location.href = data.url;
+        } else {
+          setIsPaying(false);
+          alert("Stripe redirection failed");
+        }
+      } catch (err) {
+        setIsPaying(false);
+        alert(err.response?.data?.message || err.message || "Payment initialization failed");
+      }
     }
   };
 
@@ -84,9 +105,40 @@ const Checkout = () => {
             <input name="city" className="form-control mb-3" placeholder="City" value={deliveryInfo.city} onChange={changeHandler} required />
             <input name="phoneNo" className="form-control mb-3" placeholder="Phone number" value={deliveryInfo.phoneNo} onChange={changeHandler} required />
             <input name="postalCode" className="form-control mb-3" placeholder="Postal code" value={deliveryInfo.postalCode} onChange={changeHandler} required />
-            <input name="country" className="form-control mb-4" placeholder="Country" value={deliveryInfo.country} onChange={changeHandler} required />
-            <button id="checkout_btn" className="btn btn-primary w-100" disabled={loading}>
-              {loading ? "Placing order..." : "Place Order"}
+             <input name="country" className="form-control mb-4" placeholder="Country" value={deliveryInfo.country} onChange={changeHandler} required />
+            
+            <h4 className="mb-3">Payment Method</h4>
+            <div className="form-check mb-2">
+              <input
+                className="form-check-input"
+                type="radio"
+                name="paymentMethod"
+                id="cod"
+                value="COD"
+                checked={paymentMethod === "COD"}
+                onChange={() => setPaymentMethod("COD")}
+              />
+              <label className="form-check-label ms-2" htmlFor="cod">
+                Cash on Delivery (COD)
+              </label>
+            </div>
+            <div className="form-check mb-4">
+              <input
+                className="form-check-input"
+                type="radio"
+                name="paymentMethod"
+                id="online"
+                value="Online"
+                checked={paymentMethod === "Online"}
+                onChange={() => setPaymentMethod("Online")}
+              />
+              <label className="form-check-label ms-2" htmlFor="online">
+                Pay Online (Stripe)
+              </label>
+            </div>
+
+            <button id="checkout_btn" className="btn btn-primary w-100" disabled={loading || isPaying}>
+              {isPaying ? "Redirecting to Stripe..." : loading ? "Placing order..." : paymentMethod === "COD" ? "Place Order (COD)" : "Pay Online"}
             </button>
           </form>
         </div>

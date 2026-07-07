@@ -1,44 +1,38 @@
-import React, { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { getRestaurants } from "../redux/actions/restaurantAction";
+import React from "react";
+import { useSelector } from "react-redux";
 import "./css/count.css";
 
 const CountRestaurant = () => {
-  const dispatch = useDispatch();
-
   const { count, showVegOnly, loading, error, restaurants } = useSelector(
     (state) => state.restaurants,
   );
 
-  const pureVegRestaurantsCount = Array.isArray(restaurants)
+  const vegCount = Array.isArray(restaurants)
     ? restaurants.filter((r) => r.isVeg).length
     : 0;
 
-  useEffect(() => {
-    dispatch(getRestaurants());
-  }, [dispatch, showVegOnly]);
+  const displayCount = showVegOnly ? vegCount : count;
+  const label = displayCount === 1 ? "restaurant" : "restaurants";
 
   return (
-    <div>
-      {loading ? (
-        <p> Loading restaurant count...</p>
-      ) : error ? (
-        <p>Error: {error}</p>
-      ) : (
-        <p className="NumOfRestro">
-          {showVegOnly ? pureVegRestaurantsCount : count}
-          <span className="Restro">
-            {showVegOnly
-              ? pureVegRestaurantsCount === 1
-                ? " restaurant"
-                : " restaurants"
-              : count === 1
-                ? " restaurant"
-                : " restaurants"}
-          </span>
-        </p>
-      )}
-      <hr></hr>
+    <div className="count-banner">
+      <div className="content-container">
+        {loading ? (
+          <p className="mb-0 text-white opacity-75">Fetching restaurants...</p>
+        ) : error ? (
+          <p className="mb-0 text-warning">{error}</p>
+        ) : (
+          <>
+            <h1 className="NumOfRestro">
+              {displayCount}
+              <span className="Restro"> {label} available</span>
+            </h1>
+            <p className="mb-0 mt-1" style={{ color: "rgba(255,255,255,0.8)", fontSize: "0.9rem" }}>
+              {showVegOnly ? "Showing pure vegetarian only" : "Order fresh food, delivered fast 🍕"}
+            </p>
+          </>
+        )}
+      </div>
     </div>
   );
 };

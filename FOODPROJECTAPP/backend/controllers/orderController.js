@@ -1,18 +1,16 @@
-const Order = require("../models/order");
-const FoodItem = require("../models/foodItem");
-const Cart = require("../models/cartModel");
+const Order = require("../Models/order");
+const FoodItem = require("../Models/foodItem");
+const Cart = require("../Models/cartModel");
 const { ObjectId } = require("mongodb");
 const ErrorHandler = require("../utils/errorHandler");
-const catchAsyncErrors = require("../middlewares/catchAsyncErrors");
+const catchAsyncErrors = require("../Middlewares/catchAsyncErrors");
 
 // Notice: We removed Stripe from the top of the file entirely!
 
 // Create a new order   =>  /api/v1/order/new
 exports.newOrder = catchAsyncErrors(async (req, res, next) => {
-  
-  // THE FIX: Initialize Stripe inside the function!
-  // By the time a user triggers this route, the server is fully booted 
-  // and process.env.STRIPE_SECRET_KEY is guaranteed to be loaded.
+  // Dynamically reload environment variables in case config.env changed without server restart
+  require("dotenv").config({ path: require("path").join(__dirname, "../config/config.env") });
   const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
   const { session_id } = req.body;
@@ -37,7 +35,7 @@ exports.newOrder = catchAsyncErrors(async (req, res, next) => {
     address: session.shipping_details.address.line1 + 
       (session.shipping_details.address.line2 ? " " + session.shipping_details.address.line2 : ""),
     city: session.shipping_details.address.city,
-    phoneNo: session.customer_details.phone,
+    phoneNo: session.customer_details.phone || session.customer_details.email || "",
     postalCode: session.shipping_details.address.postal_code,
     country: session.shipping_details.address.country,
   };
@@ -51,7 +49,7 @@ exports.newOrder = catchAsyncErrors(async (req, res, next) => {
   }));
 
   let paymentInfo = {
-    id: session.payment_intent,
+    id: session.payment_intent || session.id,
     status: session.payment_status,
   };
 
@@ -59,7 +57,7 @@ exports.newOrder = catchAsyncErrors(async (req, res, next) => {
     orderItems,
     deliveryInfo,
     paymentInfo,
-    deliveryCharge: +session.shipping_cost.amount_subtotal / 100,
+    deliveryCharge: +session.shipping_cost?.amount_subtotal / 100 || 0,
     itemsPrice: +session.amount_subtotal / 100,
     finalTotal: +session.amount_total / 100,
     user: req.user.id,

@@ -30,7 +30,8 @@
 // Yes. Since `deleteMany()` is used, all existing records in that collection will be removed before inserting new data. That's why seeder scripts are usually used only in **development environments**, not in production.
 
 
-const Fooditem = require("../models/foodItem");
+const path = require("path");
+const Fooditem = require("../Models/foodItem");
 const dotenv = require("dotenv");
 const connectDatabase = require("../config/database");
 
@@ -38,7 +39,7 @@ const fooditems = require("../data/foodItem.json");
 const { connect } = require("mongoose");
 
 // Setting dotenv file
-dotenv.config({ path: "backend/config/config.env" });
+dotenv.config({ path: path.join(__dirname, "../config/config.env") });
 
 connectDatabase();
 

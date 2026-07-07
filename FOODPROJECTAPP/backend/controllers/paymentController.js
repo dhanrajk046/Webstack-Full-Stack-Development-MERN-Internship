@@ -1,8 +1,8 @@
-const catchAsyncErrors = require("../middlewares/catchAsyncErrors");
+const catchAsyncErrors = require("../Middlewares/catchAsyncErrors");
 
-// process payment api
 exports.processPayment = catchAsyncErrors(async (req, res, next) => {
-  // LAZY LOADING FIX: Initialize Stripe inside the function so env variables are guaranteed to load.
+  // Dynamically reload environment variables in case config.env changed without server restart
+  require("dotenv").config({ path: require("path").join(__dirname, "../config/config.env") });
   const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
   console.log(req.body);
@@ -13,18 +13,21 @@ exports.processPayment = catchAsyncErrors(async (req, res, next) => {
     phone_number_collection: {
       enabled: true,
     },
-    line_items: req.body.items.map((item) => ({
-      price_data: {
-        currency: "inr",
-        product_data: {
-          name: item.foodItem.name,
-          images: [item.foodItem.images[0].url],
+    line_items: req.body.items.map((item) => {
+      const food = item.foodItem || item;
+      const imageUrl = food.images?.[0]?.url || "";
+      return {
+        price_data: {
+          currency: "inr",
+          product_data: {
+            name: food.name || "Food Item",
+            ...(imageUrl ? { images: [imageUrl] } : {}),
+          },
+          unit_amount: Math.round((food.price || 0) * 100),
         },
-        // rs 100 becomes 10000 paise
-        unit_amount: item.foodItem.price * 100,
-      },
-      quantity: item.quantity,
-    })),
+        quantity: item.quantity || 1,
+      };
+    }),
     mode: "payment",
     shipping_address_collection: {
       allowed_countries: ["US", "IN"],
@@ -35,7 +38,8 @@ exports.processPayment = catchAsyncErrors(async (req, res, next) => {
           display_name: "Delivery Charges",
           type: "fixed_amount",
           fixed_amount: {
-            amount: 5500, // amount in paise (5500 = 55INR)
+            amount: 4000, // amount in paise (4000 = 40INR delivery charge)
+            currency: "inr", // REQUIRED: currency must match line_items currency
           },
           // FIXED: Stripe API requires "delivery_estimate" (no 'd' at the end)
           delivery_estimate: {

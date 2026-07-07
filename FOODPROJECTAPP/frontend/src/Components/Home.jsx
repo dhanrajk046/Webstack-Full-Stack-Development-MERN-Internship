@@ -1,16 +1,12 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-
-// Actions and Slices
 import {
   sortByRatings,
   sortByReviews,
   toggleVegOnly,
 } from "../redux/slices/restaurantSlice";
 import { getRestaurants } from "../redux/actions/restaurantAction";
-
-// Components
 import Restaurant from "./Restaurant";
 import Loader from "./layout/Loader";
 import Message from "./Message";
@@ -20,77 +16,77 @@ const Home = () => {
   const dispatch = useDispatch();
   const { keyword } = useParams();
 
-  // Get restaurant related data from the Redux store
   const {
     loading: restaurantsLoading,
     error: restaurantsError,
     restaurants,
     showVegOnly,
-  } = useSelector((state) => state.restaurants); // Fixed: Changed {} to ()
+  } = useSelector((state) => state.restaurants);
 
-  // Fetch restaurants on mount or when keyword/error changes
   useEffect(() => {
-    if (restaurantsError) {
-      alert(restaurantsError);
-      return;
-    }
+    if (restaurantsError) return;
     dispatch(getRestaurants(keyword));
   }, [dispatch, restaurantsError, keyword]);
 
-  // Sorting and Filtering Handlers
-  const handleSortByRatings = () => {
-    dispatch(sortByRatings());
-  };
-
-  const handleSortByReviews = () => {
-    dispatch(sortByReviews());
-  };
-
-  const handleToggleVegOnly = () => {
-    dispatch(toggleVegOnly());
-  };
+  const visibleRestaurants = showVegOnly
+    ? restaurants?.filter((r) => r.isVeg)
+    : restaurants;
 
   return (
     <>
       <CountRestaurant />
 
-      {restaurantsLoading ? (
-        <Loader />
-      ) : restaurantsError ? (
-        <Message variant="danger">{restaurantsError}</Message>
-      ) : (
-        <>
-          <section>
-            {/* SORT BUTTONS */}
-            <div className="sort">
-              <button className="sort_veg p-3" onClick={handleToggleVegOnly}>
-                {showVegOnly ? "Show All" : "Pure Veg"}
+      <div className="content-container" style={{ paddingTop: "1.25rem", paddingBottom: "2rem" }}>
+        {restaurantsLoading ? (
+          <Loader />
+        ) : restaurantsError ? (
+          <Message variant="danger">{restaurantsError}</Message>
+        ) : (
+          <>
+            {/* Sort / Filter Bar */}
+            <div className="sort-bar">
+              <span className="text-muted me-auto" style={{ fontSize: "0.85rem" }}>
+                {visibleRestaurants?.length || 0} results
+              </span>
+              <button
+                className={`sort-btn${showVegOnly ? " active" : ""}`}
+                onClick={() => dispatch(toggleVegOnly())}
+              >
+                🥗 {showVegOnly ? "All" : "Pure Veg"}
               </button>
-
-              <button className="sort_rev p-3" onClick={handleSortByReviews}>
-                Sort By Reviews
+              <button
+                className="sort-btn"
+                onClick={() => dispatch(sortByReviews())}
+              >
+                📝 Reviews
               </button>
-
-              <button className="sort_rate p-3" onClick={handleSortByRatings}>
-                Sort By Ratings
+              <button
+                className="sort-btn"
+                onClick={() => dispatch(sortByRatings())}
+              >
+                ⭐ Ratings
               </button>
             </div>
 
-            {/* RESTAURANTS */}
-            <div className="row mt-4">
-              {restaurants?.length > 0 ? (
-                restaurants.map((restaurant) =>
-                  !showVegOnly || restaurant.isVeg ? (
-                    <Restaurant key={restaurant._id} restaurant={restaurant} />
-                  ) : null
-                )
+            {/* Restaurant List */}
+            <div className="row g-0">
+              {visibleRestaurants?.length > 0 ? (
+                visibleRestaurants.map((restaurant) => (
+                  <Restaurant key={restaurant._id} restaurant={restaurant} />
+                ))
               ) : (
-                <Message variant="info">No restaurants Found.</Message>
+                <div className="col-12">
+                  <div className="empty-state py-5">
+                    <div className="empty-icon mb-3" style={{ fontSize: "3rem" }}>🍽️</div>
+                    <h4>No restaurants found</h4>
+                    <p className="text-muted">Try a different search or remove filters.</p>
+                  </div>
+                </div>
               )}
             </div>
-          </section>
-        </>
-      )}
+          </>
+        )}
+      </div>
     </>
   );
 };
