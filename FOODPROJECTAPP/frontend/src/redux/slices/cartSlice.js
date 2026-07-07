@@ -19,19 +19,33 @@ const cartSlice = createSlice({
   reducers: {
     cartRequest: (state) => {
       state.loading = true;
+      state.error = null;
     },
     cartSuccess: (state, action) => {
       state.loading = false;
-      state.cartItems = action.payload.cartItems;
-      state.restaurant = action.payload.restaurant;
+      const payload = action.payload || {};
+      const cart = payload.cart || payload;
+      state.cartItems = Array.isArray(cart?.items)
+        ? cart.items
+        : Array.isArray(cart?.cartItems)
+          ? cart.cartItems
+          : [];
+      state.restaurant = cart?.restaurant || payload?.restaurant || {};
     },
     cartFail: (state, action) => {
       state.loading = false;
       state.error = action.payload;
     },
     updateCartSuccess: (state, action) => {
-      // state.loading = false;
-      state.cartItems = action.payload.items;
+      state.loading = false;
+      const payload = action.payload || {};
+      const cart = payload.cart || payload;
+      state.cartItems = Array.isArray(cart?.items)
+        ? cart.items
+        : Array.isArray(cart?.cartItems)
+          ? cart.cartItems
+          : [];
+      state.restaurant = cart?.restaurant || payload?.restaurant || {};
     },
     removeCartItem: (state, action) => {
       state.cartItems = action.payload?.cart?.items || [];
@@ -47,7 +61,6 @@ const cartSlice = createSlice({
     },
   },
 });
-
 
 export const {
   cartRequest,

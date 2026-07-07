@@ -3,12 +3,31 @@ const FoodItem = require("../models/foodItem");
 const Restaurant = require("../models/restaurant");
 
 async function addItemToCart(req, res) {
-  const { userId, foodItemId, restaurantId, quantity } = req.body;
+  const { foodItemId, restaurantId, quantity } = req.body;
+  const userId = req.user._id;
+  const requestedQuantity = Number(quantity);
 
   try {
+    if (
+      !foodItemId ||
+      !restaurantId ||
+      !Number.isInteger(requestedQuantity) ||
+      requestedQuantity < 1
+    ) {
+      return res.status(400).json({
+        message: "Valid food item, restaurant and quantity are required",
+      });
+    }
+
     const foodItem = await FoodItem.findById(foodItemId);
     if (!foodItem) {
       return res.status(404).json({ message: "Food item not found" });
+    }
+
+    if (foodItem.stock < requestedQuantity) {
+      return res
+        .status(400)
+        .json({ message: "Requested quantity is not available" });
     }
 
     const restaurant = await Restaurant.findById(restaurantId);
@@ -24,23 +43,32 @@ async function addItemToCart(req, res) {
         cart = new Cart({
           user: userId,
           restaurant: restaurantId,
-          items: [{ foodItem: foodItemId, quantity }],
+          items: [{ foodItem: foodItemId, quantity: requestedQuantity }],
         });
       } else {
         const itemIndex = cart.items.findIndex(
-          (item) => item.foodItem.toString() === foodItemId
+          (item) => item.foodItem.toString() === foodItemId,
         );
         if (itemIndex > -1) {
-          cart.items[itemIndex].quantity += quantity;
+          const nextQuantity =
+            cart.items[itemIndex].quantity + requestedQuantity;
+
+          if (foodItem.stock < nextQuantity) {
+            return res
+              .status(400)
+              .json({ message: "Requested quantity is not available" });
+          }
+
+          cart.items[itemIndex].quantity = nextQuantity;
         } else {
-          cart.items.push({ foodItem: foodItemId, quantity });
+          cart.items.push({ foodItem: foodItemId, quantity: requestedQuantity });
         }
       }
     } else {
       cart = new Cart({
         user: userId,
         restaurant: restaurantId,
-        items: [{ foodItem: foodItemId, quantity }],
+        items: [{ foodItem: foodItemId, quantity: requestedQuantity }],
       });
     }
 
@@ -50,14 +78,14 @@ async function addItemToCart(req, res) {
     const updatedCart = await Cart.findOne({ user: userId })
       .populate({
         path: "items.foodItem",
-        select: "name price images",
+        select: "name price images stock",
       })
       .populate({
         path: "restaurant",
         select: "name",
       });
 
-    res.status(200).json({ message: "Cart updated", cart: updatedCart });
+    res.status(200).json({ status: "success", data: updatedCart });
   } catch (error) {
     res.status(500).json({ message: "Server error", error });
   }
@@ -66,38 +94,59 @@ async function addItemToCart(req, res) {
 // Update Cart
 
 async function updateCartItemQuantity(req, res) {
-  const { userId, foodItemId, quantity } = req.body;
+  const { foodItemId, quantity } = req.body;
+  const userId = req.user._id;
+  const requestedQuantity = Number(quantity);
 
   try {
+    if (
+      !foodItemId ||
+      !Number.isInteger(requestedQuantity) ||
+      requestedQuantity < 1
+    ) {
+      return res
+        .status(400)
+        .json({ message: "Valid food item and quantity are required" });
+    }
+
     let cart = await Cart.findOne({ user: userId });
     if (!cart) {
       return res.status(404).json({ message: "Cart not found" });
     }
 
     const itemIndex = cart.items.findIndex(
-      (item) => item.foodItem.toString() === foodItemId
+      (item) => item.foodItem.toString() === foodItemId,
     );
     if (itemIndex === -1) {
       return res.status(404).json({ message: "Food item not found in cart" });
     }
 
-    cart.items[itemIndex].quantity = quantity;
+    const foodItem = await FoodItem.findById(foodItemId);
+    if (!foodItem) {
+      return res.status(404).json({ message: "Food item not found" });
+    }
+
+    if (foodItem.stock < requestedQuantity) {
+      return res
+        .status(400)
+        .json({ message: "Requested quantity is not available" });
+    }
+
+    cart.items[itemIndex].quantity = requestedQuantity;
     await cart.save();
 
     // Fetch and return the populated cart
     const updatedCart = await Cart.findOne({ user: userId })
       .populate({
         path: "items.foodItem",
-        select: "name price images",
+        select: "name price images stock",
       })
       .populate({
         path: "restaurant",
         select: "name",
       });
 
-    res
-      .status(200)
-      .json({ message: "Cart item quantity updated", cart: updatedCart });
+    res.status(200).json({ status: "success", data: updatedCart });
   } catch (error) {
     res.status(500).json({ message: "Server error", error });
   }
@@ -106,7 +155,8 @@ async function updateCartItemQuantity(req, res) {
 //Delete cart
 
 async function deleteCartItem(req, res) {
-  const { userId, foodItemId } = req.body;
+  const { foodItemId } = req.body;
+  const userId = req.user._id;
 
   try {
     let cart = await Cart.findOne({ user: userId });
@@ -115,7 +165,7 @@ async function deleteCartItem(req, res) {
     }
 
     const itemIndex = cart.items.findIndex(
-      (item) => item.foodItem.toString() === foodItemId
+      (item) => item.foodItem.toString() === foodItemId,
     );
     if (itemIndex === -1) {
       return res.status(404).json({ message: "Food item not found in cart" });
@@ -125,7 +175,9 @@ async function deleteCartItem(req, res) {
 
     if (cart.items.length === 0) {
       await Cart.deleteOne({ _id: cart._id });
-      return res.status(200).json({ message: "Cart deleted" });
+      return res
+        .status(200)
+        .json({ status: "success", data: { items: [], restaurant: {} } });
     } else {
       await cart.save();
 
@@ -133,14 +185,14 @@ async function deleteCartItem(req, res) {
       const updatedCart = await Cart.findOne({ user: userId })
         .populate({
           path: "items.foodItem",
-          select: "name price images",
+          select: "name price images stock",
         })
         .populate({
           path: "restaurant",
           select: "name",
         });
 
-      res.status(200).json({ message: "Cart item deleted", cart: updatedCart });
+      res.status(200).json({ status: "success", data: updatedCart });
     }
   } catch (error) {
     res.status(500).json({ message: "Server error", error });
@@ -150,12 +202,12 @@ async function deleteCartItem(req, res) {
 //Fetch cart Item
 
 async function getCartItem(req, res) {
-  const userId = req.user;
+  const userId = req.user._id;
   try {
     const cart = await Cart.findOne({ user: userId })
       .populate({
         path: "items.foodItem",
-        select: "name price images",
+        select: "name price images stock",
       })
       .populate({
         path: "restaurant",
@@ -163,10 +215,13 @@ async function getCartItem(req, res) {
       });
 
     if (!cart) {
-      return res.status(404).json({ message: "No cart found" });
-    } else {
-      return res.status(200).json({ status: "success", data: cart });
+      return res.status(200).json({
+        status: "success",
+        data: { items: [], restaurant: {} },
+      });
     }
+
+    return res.status(200).json({ status: "success", data: cart });
   } catch (error) {
     res.status(500).json({ message: "Server error", error });
   }

@@ -8,6 +8,7 @@ const initialState = {
   isupdated: false,
   message: null,
   success: null,
+  authChecked: false,
 };
 
 const userSlice = createSlice({
@@ -18,17 +19,37 @@ const userSlice = createSlice({
     userRequest: (state) => {
       state.loading = true;
       state.isAuthenticated = false;
+      state.error = null;
     },
     userSuccess: (state, action) => {
       state.loading = false;
       state.isAuthenticated = true;
       state.user = action.payload; // stores user data
+      state.error = null;
+      state.authChecked = true;
     },
     userFail: (state, action) => {
       state.loading = false;
       state.isAuthenticated = false;
       state.user = null;
       state.error = action.payload;
+      state.authChecked = true;
+    },
+    loadUserRequest: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    loadUserSuccess: (state, action) => {
+      state.loading = false;
+      state.isAuthenticated = true;
+      state.user = action.payload;
+      state.authChecked = true;
+    },
+    loadUserFail: (state) => {
+      state.loading = false;
+      state.isAuthenticated = false;
+      state.user = null;
+      state.authChecked = true;
     },
 
     //logout
@@ -36,6 +57,7 @@ const userSlice = createSlice({
       state.loading = false;
       state.isAuthenticated = false;
       state.user = null;
+      state.authChecked = true;
     },
     logoutFail: (state, action) => {
       state.error = action.payload;
@@ -48,6 +70,9 @@ const userSlice = createSlice({
     updateSuccess: (state, action) => {
       state.loading = false;
       state.isupdated = action.payload;
+      if (action.payload && typeof action.payload === "object") {
+        state.user = action.payload;
+      }
     },
     updateFail: (state, action) => {
       state.loading = false;
@@ -65,6 +90,9 @@ export const {
   userRequest,
   userSuccess,
   userFail,
+  loadUserRequest,
+  loadUserSuccess,
+  loadUserFail,
   logoutFail,
   logoutSuccess,
   updateFail,

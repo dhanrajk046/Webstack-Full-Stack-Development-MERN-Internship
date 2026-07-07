@@ -1,14 +1,41 @@
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faIndianRupeeSign } from "@fortawesome/free-solid-svg-icons";
+import { addItemToCart } from "../redux/actions/cartActions";
 
-const Fooditem = ({ fooditem }) => {
+const Fooditem = ({ fooditem, restaurant }) => {
+  const dispatch = useDispatch();
+  const { isAuthenticated } = useSelector((state) => state.user || {});
   const [quantity, setQuantity] = useState(1);
   const [showButtons, setShowButtons] = useState(false);
 
-  // Add button click
   const addToCartHandler = () => {
     setShowButtons(true);
+    setQuantity(1);
+  };
+
+  const confirmAddToCart = async () => {
+    if (!isAuthenticated) {
+      window.location.href = "/users/login";
+      return;
+    }
+
+    const restaurantId =
+      restaurant || fooditem.restaurant?._id || fooditem.restaurant || null;
+
+    if (!restaurantId) {
+      return;
+    }
+
+    await dispatch(
+      addItemToCart(
+        fooditem._id,
+        restaurantId,
+        quantity,
+      ),
+    );
+    setShowButtons(false);
     setQuantity(1);
   };
 
@@ -62,10 +89,7 @@ const Fooditem = ({ fooditem }) => {
             </button>
           ) : (
             <div className="stockCounter d-flex align-items-center mt-2">
-              <button
-                className="btn btn-danger"
-                onClick={decreaseQty}
-              >
+              <button className="btn btn-danger" onClick={decreaseQty}>
                 -
               </button>
 
@@ -77,11 +101,14 @@ const Fooditem = ({ fooditem }) => {
                 style={{ width: "60px" }}
               />
 
-              <button
-                className="btn btn-primary"
-                onClick={increaseQty}
-              >
+              <button className="btn btn-primary" onClick={increaseQty}>
                 +
+              </button>
+              <button
+                className="btn btn-success ms-2"
+                onClick={confirmAddToCart}
+              >
+                Add
               </button>
             </div>
           )}
@@ -90,11 +117,7 @@ const Fooditem = ({ fooditem }) => {
 
           <p>
             Status:{" "}
-            <span
-              className={
-                fooditem.stock > 0 ? "greenColor" : "redColor"
-              }
-            >
+            <span className={fooditem.stock > 0 ? "greenColor" : "redColor"}>
               {fooditem.stock > 0 ? "In Stock" : "Out of Stock"}
             </span>
           </p>

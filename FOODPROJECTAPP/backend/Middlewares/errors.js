@@ -28,53 +28,62 @@ const ErrorHandler = require("../utils/errorHandler");
 module.exports = (err, req, res, next) => {
   // if statusCode does not exist then 500 will be taken as error code ->internal server error
   err.statusCode = err.statusCode || 500;
+  const nodeEnv = (process.env.NODE_ENV || "development").toLowerCase();
+  let error = err;
 
-  if (process.env.NODE_ENV === "DEVELOPMENT") {
-    res.status(err.statusCode).json({
+  // Wrong Mongoose Object Id Error . if we type wrong product id in route we will get error.
+  if (err.name === "CastError") {
+    const message = `Resource not found. Invalid: ${err.path}`;
+    error = new ErrorHandler(message, 400);
+  }
+
+  // Handling Mongoose Validation Error
+  if (err.name === "ValidationError") {
+    const message = Object.values(err.errors)
+      .map((value) => value.message)
+      .join(", ");
+    error = new ErrorHandler(message, 400);
+  }
+
+  // Handling Mongoose duplicate key errors
+  if (err.code === 11000) {
+    const duplicatedField = Object.keys(err.keyValue || {})[0] || "field";
+    const message =
+      duplicatedField === "email"
+        ? "An account with this email already exists"
+        : `Duplicate ${duplicatedField} entered`;
+    error = new ErrorHandler(message, 400);
+  }
+
+  // Handling wrong JWT error
+  if (err.name === "JsonWebTokenError") {
+    error = new ErrorHandler("Session is invalid. Please login again.", 401);
+  }
+
+  // Handling Expired JWT error
+  if (err.name === "TokenExpiredError") {
+    error = new ErrorHandler("Session expired. Please login again.", 401);
+  }
+
+  if (nodeEnv === "development") {
+    return res.status(error.statusCode || 500).json({
       success: false,
+      message: error.message,
       error: err,
       errMessage: err.message,
       stack: err.stack,
     });
   }
 
-  if (process.env.NODE_ENV === "PRODUCTION") {
-    let error = { ...err };
-    error.message = err.message;
-
-    // Wrong Mongoose Object Id Error . if we type wrong product id in route we will get error.
-    if (err.name == "castError") {
-      const message = `Resource not found. Invalid: ${err.path}`;
-      error = new ErrorHandler(message, 400);
-    }
-
-    // Handling Mongoose Validation Error
-    if (err.name === "ValidationError") {
-      const message = Object.values(err.errors).map((value) => value.message);
-      error = new ErrorHandler(message, 400);
-    }
-
-    // Handling Mongoose duplicate key errors
-    if (err.code === 11000) {
-      const message = `Duplicate ${Object.keys(err.keyValue)} entered`;
-      error = new ErrorHandler(message, 400);
-    }
-
-    // Handling wrong JWT error
-    if (err.name === "JsonWebTokenError") {
-      const message = "JSON Web Token is invalid. Try Again!!!";
-      error = new ErrorHandler(message, 400);
-    }
-
-    // Handling Expired JWT error
-    if (err.name === "TokenExpiredError") {
-      const message = "JSON Web Token is expired. Try Again!!!";
-      error = new ErrorHandler(message, 400);
-    }
-
-    res.status(error.statusCode).json({
+  if (nodeEnv === "production") {
+    return res.status(error.statusCode || 500).json({
       success: false,
       message: error.message || "Internal Server Error",
     });
   }
+
+  return res.status(error.statusCode || 500).json({
+    success: false,
+    message: error.message || "Internal Server Error",
+  });
 };

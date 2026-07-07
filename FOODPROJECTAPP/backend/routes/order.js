@@ -3,6 +3,7 @@ const router = express.Router();
 
 const {
   newOrder,
+  placeOrderFromCart,
   getSingleOrder,
   myOrders,
 } = require("../controllers/orderController");
@@ -10,8 +11,9 @@ const {
 const authController = require("../controllers/authController");
 
 router.route("/new").post(authController.protect, newOrder);
+router.route("/place-order").post(authController.protect, placeOrderFromCart);
+router.route("/me/myOrders").get(authController.protect, myOrders);
 
 router.route("/:id").get(authController.protect, getSingleOrder);
-router.route("/me/myOrders").get(authController.protect, myOrders);
 
 module.exports = router;

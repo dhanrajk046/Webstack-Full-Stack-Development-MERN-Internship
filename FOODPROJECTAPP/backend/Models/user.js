@@ -25,6 +25,7 @@ const userSchema = new mongoose.Schema(
       required: [true, "please enter emailid"],
       unique: true,
       lowercase: true,
+      trim: true,
       validate: [validator.isEmail, "Enter valid email"],
     },
     password: {
@@ -87,7 +88,7 @@ userSchema.methods.correctPassword = async function (
 userSchema.methods.changepasswordAfter = function (JWTTimestamp) {
   if (this.passwordChangedAt) {
     const changedTimestamp = parseInt(
-      this.passwordChangedAt.gettime() / 1000,
+      this.passwordChangedAt.getTime() / 1000,
       10,
     );
     return JWTTimestamp < changedTimestamp;
@@ -105,9 +106,6 @@ userSchema.methods.changepasswordAfter = function (JWTTimestamp) {
 // }
 
 userSchema.methods.getJWTToken = function () {
-  console.log("JWT_SECRET:", process.env.JWT_SECRET);
-  console.log("JWT_EXPIRES:", process.env.JWT_EXPIRES);
-
   return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES,
   });

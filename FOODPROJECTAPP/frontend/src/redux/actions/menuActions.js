@@ -22,12 +22,14 @@ export const getMenus = (id) => async (dispatch) => {
     let menuData = [];
     let menuDocId = null;
 
-    if (response.data.data?.length > 0) {
-      menuDocId = response.data.data[0]._id;
-      menuData = response.data.data[0].menu;
-    }
+    const payload = Array.isArray(response?.data?.data)
+      ? response.data.data
+      : [];
 
-    // no fallback; use backend response
+    if (payload.length > 0) {
+      menuDocId = payload[0]._id || null;
+      menuData = payload;
+    }
 
     dispatch(
       getMenusSuccess({

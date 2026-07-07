@@ -1,77 +1,85 @@
-import api from "../../uitils/api"
+import api from "../../utils/api";
 import {
-   userRequest,
+  userRequest,
   userSuccess,
   userFail,
+  loadUserRequest,
+  loadUserSuccess,
+  loadUserFail,
   logoutFail,
   logoutSuccess,
-  updateFail,
   updateRequest,
   updateSuccess,
-  updateReset,
-  clearErrors,
-    
-} from "../slices/userSlice"
+  updateFail,
+} from "../slices/userSlice";
+import { clearCart } from "../slices/cartSlice";
+import { clearOrderState } from "../slices/orderSlice";
 
-//login
-export const login = (email, password) => async(dispatch) =>{
-    try{
-        dispatch(userRequest())
-        const {data} = await api.post("/v1/users/login", {email, password})
-        dispatch(userSuccess(data.data.user))
-    }catch(error){
-        dispatch(userFail("login failed"))
-    }
-    
-}
+export const login = (email, password) => async (dispatch) => {
+  try {
+    dispatch(userRequest());
+    const { data } = await api.post("/v1/users/login", { email, password });
+    dispatch(userSuccess(data?.data?.user || data?.user));
+    return data?.data?.user || data?.user;
+  } catch (error) {
+    dispatch(userFail(error.response?.data?.message || "Login failed"));
+    return null;
+  }
+};
 
-//signup/register
-export const register = {userData} => async(disaptch) =>{
-    try{
-        diaptch(userRequest());
-        const (data) = await api.post("/v1/users/signup", userData,{
-            headers: {
-                "Content-Type": "application/json"
-            }
-        })
-        dispatch(userSuccess(data.data.user))
+export const register = (userData) => async (dispatch) => {
+  try {
+    dispatch(userRequest());
+    const payload = {
+      ...userData,
+      name: userData.name.trim(),
+      email: userData.email.trim().toLowerCase(),
+      phoneNumber: userData.phoneNumber.trim(),
+    };
+    const { data } = await api.post("/v1/users/signup", payload, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    dispatch(userSuccess(data?.data?.user || data?.user));
+    return data?.data?.user || data?.user;
+  } catch (error) {
+    dispatch(userFail(error.response?.data?.message || "Registration failed"));
+    return null;
+  }
+};
 
-    }catch(error){
-        diapatch(userFail(error.response?.data?.message))
-    }
-}
+export const loadUser = () => async (dispatch) => {
+  try {
+    dispatch(loadUserRequest());
+    const { data } = await api.get("/v1/users/me");
+    dispatch(loadUserSuccess(data?.data?.user || data?.user));
+  } catch (error) {
+    dispatch(loadUserFail());
+  }
+};
 
-//load user
-export const load user =() => async(dispatch)=>{
-    try{
-        dispatch(userRequest());
-        const {data} = await api.get("/v1/uaer/me")
-        dispatch(userSuccess())
-    }catch(error){
-        diaptach(userFail(error.response?.data?.message))
-    }
-}
+export const updateProfile = (userData) => async (dispatch) => {
+  try {
+    dispatch(updateRequest());
+    const { data } = await api.put("/v1/users/me/update", userData, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    dispatch(updateSuccess(data?.data?.user || data?.user || true));
+  } catch (error) {
+    dispatch(updateFail(error.response?.data?.message || "Update failed"));
+  }
+};
 
-//update profile
-export const updateProfile = (userData) => async(dispatch) =>{
-    try{
-        dispatch(updateRequest());
-        const {data} = await api.put("/v1/users/me/update", userData,{
-            headers:
-            {"content-Type" : "multipart/form-data"}
-        })
-        dispatch(updateSuccess(data.userSuccess))
-    }catch(error){
-        dispatch(updataFail(error.response?.data?.message))
-    }
-}
-
-//logout
-export const logout =() => async(dispatch) =>{
-    try{
-        await api.get("/v1/users/logout")
-        dispatch(logoutSuccess)
-    }catch(error){
-        dispatch(logout(error.response?.data?.message))
-    }
-}
+export const logout = () => async (dispatch) => {
+  try {
+    await api.get("/v1/users/logout");
+    dispatch(logoutSuccess());
+    dispatch(clearCart());
+    dispatch(clearOrderState());
+  } catch (error) {
+    dispatch(logoutFail(error.response?.data?.message || "Logout failed"));
+  }
+};

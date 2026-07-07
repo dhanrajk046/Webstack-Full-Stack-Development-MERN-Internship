@@ -18,7 +18,12 @@ const payment = require("./routes/payment");
 const cart = require("./routes/cart");
 
 // --- Middlewares ---
-app.use(cors());
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+  }),
+);
 app.use(cookieParser());
 app.use(fileUpload());
 
@@ -33,6 +38,14 @@ app.use("/api/v1/eats/orders", order);
 app.use("/api/v1/users", auth);
 app.use("/api/v1", payment);
 app.use("/api/v1/eats/cart", cart);
+
+app.get("/api/v1/health", (req, res) => {
+  res.status(200).json({
+    success: true,
+    status: "ok",
+    service: "food-project-api",
+  });
+});
 
 // --- View Engine ---
 app.set("view engine", "pug");

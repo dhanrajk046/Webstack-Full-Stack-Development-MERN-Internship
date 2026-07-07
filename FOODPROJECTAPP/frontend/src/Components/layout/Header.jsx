@@ -1,9 +1,20 @@
 import React from "react";
-import { Link, Route, Routes } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import Search from "./Search";
 import "../../App.css";
+import { logout } from "../../redux/actions/userActions";
 
 const Header = () => {
+  const location = useLocation();
+  const dispatch = useDispatch();
+  const { cartItems = [] } = useSelector((state) => state.cart || {});
+  const { isAuthenticated, user } = useSelector((state) => state.user || {});
+
+  const logoutHandler = () => {
+    dispatch(logout());
+  };
+
   return (
     <>
       <nav className="navbar row sticky-top">
@@ -17,10 +28,8 @@ const Header = () => {
         {/* search bar and search icon */}
 
         <div className="col-12 col-md-3 mt-2 mt-md-0 ">
-          <Routes>
-            <Route path="/" element={<Search />} />
-            <Route path="/eats/stores/search/:keyword" element={<Search />} />
-          </Routes>
+          {(location.pathname === "/" ||
+            location.pathname.startsWith("/eats/stores/search/")) && <Search />}
         </div>
 
         {/* Login */}
@@ -31,14 +40,37 @@ const Header = () => {
               Cart
             </span>
             <span className="ml-1" id="cart_count">
-             2
+              {cartItems.length}
             </span>
           </Link>
-              <Link to="/users/login" className="material-symbols-outlined web_logo" >  
-           account_circle
+          <Link to="/orders" style={{ textDecoration: "none" }}>
+            <span className="ml-3" id="cart">
+              Orders
+            </span>
+          </Link>
+          {isAuthenticated ? (
+            <>
+              <Link to="/account" style={{ textDecoration: "none" }}>
+                <span className="ml-3" id="cart">
+                  {user?.name?.split(" ")[0] || "Account"}
+                </span>
               </Link>
-            
-         
+              <button
+                type="button"
+                className="btn btn-sm btn-light ml-3"
+                onClick={logoutHandler}
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <Link
+              to="/users/login"
+              className="material-symbols-outlined web_logo"
+            >
+              account_circle
+            </Link>
+          )}
         </div>
       </nav>
     </>
