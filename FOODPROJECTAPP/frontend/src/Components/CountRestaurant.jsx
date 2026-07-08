@@ -28,7 +28,7 @@ const CountRestaurant = () => {
               <span className="Restro"> {label} available</span>
             </h1>
             <p className="mb-0 mt-1" style={{ color: "rgba(255,255,255,0.8)", fontSize: "0.9rem" }}>
-              {showVegOnly ? "Showing pure vegetarian only" : "Order fresh food, delivered fast 🍕"}
+              {showVegOnly ? "Showing pure vegetarian only" : "Your wish is our command 🧞 Order fresh, delivered fast"}
             </p>
           </>
         )}

@@ -97,6 +97,13 @@ const orderSchema = mongoose.Schema({
   deliveredAt: {
     type: Date,
   },
+  cancelledAt: {
+    type: Date,
+  },
+  cancelledReason: {
+    type: String,
+    default: "",
+  },
   createdAt: {
     type: Date,
     default: Date.now,
@@ -114,10 +121,10 @@ orderSchema.pre("save", async function () {
     const foodItem = await mongoose
       .model("FoodItem")
       .findById(orderItem.fooditem);
-      
+
     if (!foodItem) {
       // Throwing an error automatically stops the save process in modern Mongoose
-      throw new Error("Food item not found."); 
+      throw new Error("Food item not found.");
     }
 
     if (foodItem.stock < orderItem.quantity) {

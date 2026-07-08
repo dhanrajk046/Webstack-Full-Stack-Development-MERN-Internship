@@ -174,6 +174,7 @@ exports.myOrders = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
+
 // Get all orders - ADMIN  =>   /api/v1/admin/orders/
 exports.allOrders = catchAsyncErrors(async (req, res, next) => {
   const orders = await Order.find();
@@ -188,5 +189,50 @@ exports.allOrders = catchAsyncErrors(async (req, res, next) => {
     success: true,
     totalAmount,
     orders,
+  });
+});
+
+// Cancel an order (within 3 days)  =>  /api/v1/eats/orders/:id/cancel
+exports.cancelOrder = catchAsyncErrors(async (req, res, next) => {
+  const order = await Order.findById(req.params.id);
+
+  if (!order) {
+    return next(new ErrorHandler("Order not found", 404));
+  }
+
+  // Ensure the order belongs to the requesting user
+  if (order.user.toString() !== req.user._id.toString()) {
+    return next(new ErrorHandler("You are not authorised to cancel this order", 403));
+  }
+
+  // Cannot cancel if already delivered or already cancelled
+  if (order.orderStatus === "Delivered") {
+    return next(new ErrorHandler("Delivered orders cannot be cancelled", 400));
+  }
+
+  if (order.orderStatus === "Cancelled") {
+    return next(new ErrorHandler("This order is already cancelled", 400));
+  }
+
+  // Restore stock for each item in the cancelled order
+  for (const item of order.orderItems) {
+    const foodItem = await FoodItem.findById(item.fooditem);
+    if (foodItem) {
+      foodItem.stock += item.quantity;
+      await foodItem.save({ validateBeforeSave: false });
+    }
+  }
+
+  // Update order status
+  order.orderStatus = "Cancelled";
+  order.cancelledAt = Date.now();
+  order.cancelledReason = req.body.reason || "Cancelled by user";
+
+  await order.save({ validateBeforeSave: false });
+
+  res.status(200).json({
+    success: true,
+    message: "Order cancelled successfully",
+    order,
   });
 });

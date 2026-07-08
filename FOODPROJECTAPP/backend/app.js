@@ -16,6 +16,7 @@ const order = require("./routes/order");
 const auth = require("./routes/auth");
 const payment = require("./routes/payment");
 const cart = require("./routes/cart");
+const aiRouter = require("./routes/ai");
 
 // --- Middlewares ---
 app.use(
@@ -38,6 +39,7 @@ app.use("/api/v1/eats/orders", order);
 app.use("/api/v1/users", auth);
 app.use("/api/v1", payment);
 app.use("/api/v1/eats/cart", cart);
+app.use("/api/v1/ai", aiRouter);
 
 app.get("/api/v1/health", (req, res) => {
   res.status(200).json({
@@ -46,6 +48,21 @@ app.get("/api/v1/health", (req, res) => {
     service: "food-project-api",
   });
 });
+
+app.get("/api/v1/restart", (req, res) => {
+  res.status(200).json({ success: true, message: "Restarting server..." });
+  setTimeout(() => {
+    const { spawn } = require("child_process");
+    const child = spawn(process.argv[0], process.argv.slice(1), {
+      detached: true,
+      stdio: "inherit",
+      cwd: process.cwd()
+    });
+    child.unref();
+    process.exit(0);
+  }, 500);
+});
+
 
 // --- View Engine ---
 app.set("view engine", "pug");

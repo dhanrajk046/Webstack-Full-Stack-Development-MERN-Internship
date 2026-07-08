@@ -30,8 +30,9 @@ const Header = () => {
         <div className="navbar-container">
           {/* Logo */}
           <div className="navbar-logo">
-            <Link to="/" onClick={closeMobileNav}>
-              <img src="/images/logo.webp" alt="FoodEats logo" />
+            <Link to="/" onClick={closeMobileNav} style={{ display: "flex", alignItems: "center", gap: "0.5rem", textDecoration: "none" }}>
+              <img src="/images/logo.webp" alt="Food Genie logo" onError={(e) => { e.target.style.display = 'none'; }} />
+              <span style={{ color: "#fff", fontWeight: 800, fontSize: "1.2rem", letterSpacing: "-0.01em", whiteSpace: "nowrap" }}>🧞 Food Genie</span>
             </Link>
           </div>
 
@@ -77,7 +78,7 @@ const Header = () => {
           <button
             className="navbar-toggle"
             onClick={() => setMenuOpen((o) => !o)}
-            aria-label="Toggle navigation"
+            aria-label="Toggle Food Genie navigation"
             aria-expanded={menuOpen}
           >
             <i className={menuOpen ? "fa fa-times" : "fa fa-bars"} aria-hidden="true"></i>

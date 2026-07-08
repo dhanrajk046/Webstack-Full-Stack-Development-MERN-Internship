@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const Search = () => {
+const Search = ({ onSearch }) => {
   const [keyword, setKeyword] = useState("");
   const navigate = useNavigate();
 
@@ -9,24 +9,29 @@ const Search = () => {
     e.preventDefault();
 
     if (keyword.trim()) {
-      navigate(`/eats/stores/search/${keyword}`);
+      navigate(`/eats/stores/search/${keyword.trim()}`);
     } else {
       navigate("/");
     }
+
+    if (onSearch) onSearch();
   };
 
   return (
-    <form onSubmit={searchHandler} className="search-form w-100">
+    <form onSubmit={searchHandler} className="search-form w-100" role="search" aria-label="Search restaurants">
       <div className="input-group">
+        <label htmlFor="search_field" className="visually-hidden">Search restaurants</label>
         <input
-          type="text"
+          type="search"
           id="search_field"
           className="form-control"
-          placeholder="Search Your Favorite Restaurant..."
+          placeholder="Search restaurants..."
+          value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
+          autoComplete="off"
         />
 
-        <button id="search_btn" className="btn btn-success" type="submit">
+        <button id="search_btn" className="btn btn-success" type="submit" aria-label="Submit search">
           <i className="fa fa-search" aria-hidden="true"></i>
         </button>
       </div>

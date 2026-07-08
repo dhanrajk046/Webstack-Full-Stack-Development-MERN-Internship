@@ -48,30 +48,122 @@ const Register = () => {
     }
   };
 
+  const passwordMismatch =
+    formData.passwordConfirm && formData.password !== formData.passwordConfirm;
+
   return (
     <div className="container py-5">
       <div className="row justify-content-center">
-        <div className="col-md-7 col-lg-5">
-          <form className="p-4 bg-white rounded shadow-sm" onSubmit={submitHandler}>
-            <h2 className="mb-4">Create Account</h2>
-            {error && <div className="alert alert-danger">{error}</div>}
-            {clientError && <div className="alert alert-warning">{clientError}</div>}
-            {formData.passwordConfirm &&
-              formData.password !== formData.passwordConfirm && (
-                <div className="alert alert-warning">Passwords must match.</div>
-              )}
-            <input name="name" className="form-control mb-3" placeholder="Full name" value={formData.name} onChange={changeHandler} required />
-            <input name="email" type="email" className="form-control mb-3" placeholder="Email" value={formData.email} onChange={changeHandler} required />
-            <input name="phoneNumber" className="form-control mb-3" placeholder="10 digit phone number" pattern="[0-9]{10}" value={formData.phoneNumber} onChange={changeHandler} required />
-            <input name="password" type="password" className="form-control mb-3" placeholder="Password" minLength="6" value={formData.password} onChange={changeHandler} required />
-            <input name="passwordConfirm" type="password" className="form-control mb-4" placeholder="Confirm password" value={formData.passwordConfirm} onChange={changeHandler} required />
-            <button className="btn btn-primary w-100" disabled={loading || formData.password !== formData.passwordConfirm}>
-              {loading ? "Creating account..." : "Register"}
-            </button>
-            <p className="mt-3 mb-0 text-center">
-              Already registered? <Link to="/users/login">Login</Link>
+        <div className="col-md-7 col-lg-6 col-xl-5">
+          <div className="form-card">
+            {/* Brand header */}
+            <div className="text-center mb-4">
+              <div style={{ fontSize: "2.5rem", marginBottom: "0.5rem" }}>🧞</div>
+              <h1 style={{ fontSize: "1.5rem", fontWeight: 800, marginBottom: "0.25rem" }}>Create your account</h1>
+              <p style={{ color: "var(--text-muted)", fontSize: "0.88rem", margin: 0 }}>Join Food Genie and start ordering</p>
+            </div>
+
+            {error && <div className="alert alert-danger py-2" role="alert">{error}</div>}
+            {clientError && <div className="alert alert-warning py-2" role="alert">{clientError}</div>}
+            {passwordMismatch && (
+              <div className="alert alert-warning py-2" role="alert">Passwords must match.</div>
+            )}
+
+            <form onSubmit={submitHandler} noValidate>
+              <div className="mb-3">
+                <label htmlFor="name_field" className="form-label">Full name</label>
+                <input
+                  id="name_field"
+                  name="name"
+                  className="form-control"
+                  placeholder="John Doe"
+                  value={formData.name}
+                  onChange={changeHandler}
+                  autoComplete="name"
+                  required
+                />
+              </div>
+
+              <div className="mb-3">
+                <label htmlFor="email_reg_field" className="form-label">Email address</label>
+                <input
+                  id="email_reg_field"
+                  name="email"
+                  type="email"
+                  className="form-control"
+                  placeholder="you@example.com"
+                  value={formData.email}
+                  onChange={changeHandler}
+                  autoComplete="email"
+                  required
+                />
+              </div>
+
+              <div className="mb-3">
+                <label htmlFor="phone_field" className="form-label">Phone number</label>
+                <input
+                  id="phone_field"
+                  name="phoneNumber"
+                  className="form-control"
+                  placeholder="10 digit mobile number"
+                  pattern="[0-9]{10}"
+                  value={formData.phoneNumber}
+                  onChange={changeHandler}
+                  autoComplete="tel"
+                  required
+                />
+              </div>
+
+              <div className="mb-3">
+                <label htmlFor="password_reg_field" className="form-label">Password</label>
+                <input
+                  id="password_reg_field"
+                  name="password"
+                  type="password"
+                  className="form-control"
+                  placeholder="Min. 6 characters"
+                  minLength="6"
+                  value={formData.password}
+                  onChange={changeHandler}
+                  autoComplete="new-password"
+                  required
+                />
+              </div>
+
+              <div className="mb-4">
+                <label htmlFor="confirm_password_field" className="form-label">Confirm password</label>
+                <input
+                  id="confirm_password_field"
+                  name="passwordConfirm"
+                  type="password"
+                  className={`form-control${passwordMismatch ? " is-invalid" : ""}`}
+                  placeholder="Re-enter your password"
+                  value={formData.passwordConfirm}
+                  onChange={changeHandler}
+                  autoComplete="new-password"
+                  required
+                />
+              </div>
+
+              <button
+                id="register_btn"
+                className="btn btn-primary w-100 py-2"
+                type="submit"
+                disabled={loading || passwordMismatch}
+                style={{ borderRadius: "var(--radius-pill)", fontWeight: 700 }}
+              >
+                {loading ? (
+                  <><span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Creating account...</>
+                ) : "Create Account"}
+              </button>
+            </form>
+
+            <hr className="my-4" />
+
+            <p className="mb-0 text-center" style={{ fontSize: "0.88rem" }}>
+              Already on Food Genie? <Link to="/users/login" style={{ fontWeight: 600, color: "var(--brand-green)" }}>Sign in</Link>
             </p>
-          </form>
+          </div>
         </div>
       </div>
     </div>

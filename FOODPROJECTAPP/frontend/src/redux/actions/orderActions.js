@@ -9,6 +9,9 @@ import {
   orderDetailsRequest,
   orderDetailsSuccess,
   orderDetailsFail,
+  cancelOrderRequest,
+  cancelOrderSuccess,
+  cancelOrderFail,
 } from "../slices/orderSlice";
 import { clearCart } from "../slices/cartSlice";
 
@@ -19,27 +22,19 @@ export const placeOrder = (deliveryInfo) => async (dispatch) => {
   try {
     dispatch(orderRequest());
 
-    // 💡 Note: Make sure your Express backend expects req.body.deliveryInfo
-    // If it expects flat properties, you might need to spread it instead: { ...deliveryInfo }
     const { data } = await api.post("/v1/eats/orders/place-order", {
-      deliveryInfo, 
+      deliveryInfo,
     });
 
-    // Save to Redux state
     dispatch(orderSuccess(data?.order));
-    
-    // Empty the user's cart after a successful order
     dispatch(clearCart());
-    
-    // Return the order data so Checkout.jsx can navigate using the new _id
-    return data?.order; 
+    return data?.order;
 
   } catch (error) {
     dispatch(
       orderFail(error.response?.data?.message || "Unable to place order. Please try again.")
     );
-    // Return null so the UI doesn't crash when trying to navigate
-    return null; 
+    return null;
   }
 };
 
@@ -52,8 +47,7 @@ export const fetchMyOrders = () => async (dispatch) => {
 
     const { data } = await api.get("/v1/eats/orders/me/myOrders");
 
-    // Default to an empty array if backend returns nothing
-    dispatch(ordersSuccess(data?.orders || [])); 
+    dispatch(ordersSuccess(data?.orders || []));
 
   } catch (error) {
     dispatch(
@@ -71,12 +65,30 @@ export const fetchOrderDetails = (id) => async (dispatch) => {
 
     const { data } = await api.get(`/v1/eats/orders/${id}`);
 
-    // Grabs 'data.order' to perfectly match the JSON from your backend
-    dispatch(orderDetailsSuccess(data?.order)); 
+    dispatch(orderDetailsSuccess(data?.order));
 
   } catch (error) {
     dispatch(
       orderDetailsFail(error.response?.data?.message || "Unable to find order details.")
     );
+  }
+};
+
+// ==========================================
+// 4. CANCEL ORDER (within 3 days)
+// ==========================================
+export const cancelOrder = (id, reason = "Cancelled by user") => async (dispatch) => {
+  try {
+    dispatch(cancelOrderRequest());
+
+    const { data } = await api.patch(`/v1/eats/orders/${id}/cancel`, { reason });
+
+    dispatch(cancelOrderSuccess(data?.order));
+    return { success: true, message: data?.message };
+
+  } catch (error) {
+    const message = error.response?.data?.message || "Unable to cancel order. Please try again.";
+    dispatch(cancelOrderFail(message));
+    return { success: false, message };
   }
 };

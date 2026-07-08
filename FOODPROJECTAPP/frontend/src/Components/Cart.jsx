@@ -77,6 +77,7 @@ const Cart = () => {
               const foodItem = getFoodItem(item);
               const stock = Number(foodItem?.stock || 0);
               const quantity = Number(item.quantity || 1);
+              const fallbackImage = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100"><rect width="100" height="100" rx="10" fill="%23f3f4f6"/><text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" font-size="40">🍲</text></svg>';
 
               return (
                 <div
@@ -85,9 +86,13 @@ const Cart = () => {
                 >
                   <div className="col-4 col-md-2">
                     <img
-                      src={foodItem?.images?.[0]?.url || "/images/placeholder.png"}
+                      src={foodItem?.images?.[0]?.url || fallbackImage}
                       alt={foodItem?.name || "Cart item"}
                       className="img-fluid rounded"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = fallbackImage;
+                      }}
                     />
                   </div>
 
