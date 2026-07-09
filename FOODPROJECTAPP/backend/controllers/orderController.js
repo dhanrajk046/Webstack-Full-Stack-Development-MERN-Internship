@@ -146,7 +146,7 @@ exports.placeOrderFromCart = catchAsyncErrors(async (req, res, next) => {
 exports.getSingleOrder = catchAsyncErrors(async (req, res, next) => {
   const order = await Order.findById(req.params.id)
     .populate("user", "name email")
-    .populate("restaurant")
+    .populate("restaurant", "-reviews")
     .exec();
 
   if (!order) {
@@ -164,7 +164,7 @@ exports.myOrders = catchAsyncErrors(async (req, res, next) => {
   const userId = new ObjectId(req.user.id);
   const orders = await Order.find({ user: userId })
     .populate("user", "name email")
-    .populate("restaurant")
+    .populate("restaurant", "-reviews")
     .sort({ createdAt: -1 })
     .exec();
 

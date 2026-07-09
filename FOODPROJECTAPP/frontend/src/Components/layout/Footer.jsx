@@ -8,7 +8,7 @@ const Footer = () => {
         <div className="footer-grid">
           {/* Brand */}
           <div className="footer-brand">
-            <div className="footer-logo">🧞 Food Genie</div>
+            <div className="footer-logo">Food Genie™</div>
             <p className="footer-tagline">Your wish is our command. Fresh meals delivered fast to your doorstep.</p>
             <div className="footer-social">
               <a href="#" aria-label="Facebook" className="social-link"><i className="fa-brands fa-facebook-f"></i></a>
@@ -38,7 +38,7 @@ const Footer = () => {
 
         <div className="footer-bottom">
           <p className="mb-0">
-            &copy; {new Date().getFullYear()} <strong style={{ color: "#fff" }}>Food Genie</strong> — All Rights Reserved
+            &copy; {new Date().getFullYear()} <strong style={{ color: "#fff" }}>Food Genie™</strong> — All Rights Reserved
           </p>
           <p className="mb-0 footer-tagline-sm">Made with ❤️ for food lovers</p>
         </div>

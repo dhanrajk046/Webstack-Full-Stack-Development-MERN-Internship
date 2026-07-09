@@ -28,7 +28,9 @@ const menuSchema = new mongoose.Schema(
 // ... your schema definitions above ...
 
 // 1. You must define the model and assign it to the variable 'Menu'
+// High performance query index
+menuSchema.index({ restaurant: 1 });
+
 const Menu = mongoose.model('Menu', menuSchema); 
 
-// 2. Then you can export it
 module.exports = Menu;

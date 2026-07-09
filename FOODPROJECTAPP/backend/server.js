@@ -32,3 +32,32 @@ process.on("unhandledRejection", (err) => {
     process.exit(1);
   });
 });
+
+// Auto-update images for Haldiram
+const FoodItem = require("./Models/foodItem");
+const Restaurant = require("./Models/restaurant");
+setTimeout(async () => {
+  try {
+    const items = await FoodItem.find({});
+    let updated = 0;
+    for (let item of items) {
+      if (!item.images || !item.images[0] || !item.images[0].url || !item.images[0].url.includes("pollinations")) {
+        // More generic prompt for all cuisines
+        const prompt = `${item.name} delicious food professional food photography 4k`;
+        const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=600&height=400&nologo=true`;
+        
+        item.images = [{
+          public_id: `dyn_${item._id}`,
+          url: url
+        }];
+        await item.save();
+        updated++;
+      }
+    }
+    if (updated > 0) {
+      console.log(`Updated ${updated} food items across all restaurants with new AI images!`);
+    }
+  } catch (err) {
+    console.error("Global image update failed:", err);
+  }
+}, 3000);

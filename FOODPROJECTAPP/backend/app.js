@@ -41,6 +41,9 @@ app.use("/api/v1", payment);
 app.use("/api/v1/eats/cart", cart);
 app.use("/api/v1/ai", aiRouter);
 
+const fixRouter = require("./routes/fixImages");
+app.use("/api/v1/fix", fixRouter);
+
 app.get("/api/v1/health", (req, res) => {
   res.status(200).json({
     success: true,
@@ -67,6 +70,14 @@ app.get("/api/v1/restart", (req, res) => {
 // --- View Engine ---
 app.set("view engine", "pug");
 app.set("views", path.join(__dirname, "view"));
+
+// --- Deployment (Production Ready) ---
+if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "PRODUCTION") {
+  app.use(express.static(path.join(__dirname, "../frontend/dist")));
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "../frontend/dist/index.html"));
+  });
+}
 
 // --- 404 Handler ---
 app.use((req, res, next) => {

@@ -1,9 +1,14 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 const Search = ({ onSearch }) => {
-  const [keyword, setKeyword] = useState("");
+  const { keyword: urlKeyword } = useParams();
+  const [keyword, setKeyword] = useState(urlKeyword || "");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    setKeyword(urlKeyword || "");
+  }, [urlKeyword]);
 
   const searchHandler = (e) => {
     e.preventDefault();

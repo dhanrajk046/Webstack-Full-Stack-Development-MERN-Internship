@@ -39,10 +39,16 @@
 
 html, body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  font-size: 16px;
+  font-size: 18px;
   line-height: 1.6;
   color: var(--text-dark);
-  background-color: var(--bg-light);
+  background-image: 
+    linear-gradient(rgba(248, 249, 250, 0.92), rgba(248, 249, 250, 0.92)),
+    url('/images/flat-lay-green-vegetables-fruits.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
   width: 100%;
   margin: 0;
   padding: 0;
@@ -102,10 +108,11 @@ a:hover {
 }
 
 .navbar-logo img {
-  height: 36px;
+  height: 32px;
   width: auto;
+  object-fit: contain;
   display: block;
-  filter: brightness(0) invert(1);
+  background-color: transparent;
   transition: var(--transition);
 }
 
@@ -1948,5 +1955,373 @@ a:hover {
   border-radius: var(--radius-pill);
   padding: 3px 10px;
   display: inline-block;
+}
+
+/* =============================================
+   RESPONSIVE FOOD ITEM GRID IMPROVEMENTS
+   ============================================= */
+
+/* Ensure 2 columns on mobile for food items */
+@media (max-width: 575px) {
+  .col-6 {
+    padding-left: 0.35rem;
+    padding-right: 0.35rem;
+  }
+  .row.g-3 {
+    --bs-gutter-x: 0.65rem;
+    --bs-gutter-y: 0.65rem;
+  }
+  .food-image, .card img.food-image {
+    height: 130px !important;
+  }
+}
+
+@media (max-width: 400px) {
+  .food-image, .card img.food-image {
+    height: 110px !important;
+  }
+}
+
+/* =============================================
+   RESTAURANT HEADER CARD
+   ============================================= */
+.restaurant-header-card {
+  border-radius: var(--radius-md);
+  transition: var(--transition);
+}
+
+@media (max-width: 575px) {
+  .restaurant-header-card {
+    padding: 1rem !important;
+  }
+  .restaurant-header-card .d-flex.justify-content-between {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  #ai-analyser-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* =============================================
+   AI MODAL RESPONSIVE
+   ============================================= */
+.cancel-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  backdrop-filter: blur(2px);
+}
+
+.cancel-modal-box {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-height: calc(100vh - 2rem);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.cancel-modal-header {
+  padding: 1.25rem 1.5rem 1rem;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.cancel-modal-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.4rem;
+}
+
+.cancel-modal-title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin-bottom: 0.2rem;
+}
+
+.cancel-modal-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 0;
+}
+
+.cancel-modal-body {
+  overflow-y: auto;
+  flex: 1;
+}
+
+.cancel-modal-footer {
+  flex-shrink: 0;
+}
+
+@media (max-width: 575px) {
+  .cancel-modal-header {
+    padding: 1rem 1rem 0.75rem;
+  }
+  .cancel-modal-title {
+    font-size: 1rem;
+  }
+}
+
+/* =============================================
+   SORT BAR RESPONSIVE
+   ============================================= */
+@media (max-width: 480px) {
+  .sort-bar {
+    gap: 0.35rem;
+  }
+  .sort-btn {
+    padding: 0.35rem 0.65rem;
+    font-size: 0.75rem;
+  }
+}
+
+/* =============================================
+   MENU CATEGORY TITLE
+   ============================================= */
+.menu-category-title {
+  position: relative;
+  padding-bottom: 0.4rem;
+}
+
+.menu-category-title::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 40px;
+  height: 3px;
+  background: var(--brand-green);
+  border-radius: 2px;
+}
+
+/* =============================================
+   BACK LINK
+   ============================================= */
+.d-inline-flex.align-items-center.gap-1.mb-3 {
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.d-inline-flex.align-items-center.gap-1.mb-3:hover {
+  gap: 0.5rem !important;
+}
+
+/* =============================================
+   PRODUCTION UTILITIES
+   ============================================= */
+.fw-500 { font-weight: 500 !important; }
+.fw-600 { font-weight: 600 !important; }
+.fw-700 { font-weight: 700 !important; }
+.fw-800 { font-weight: 800 !important; }
+
+/* Prevent FOUC on images */
+img {
+  display: block;
+  background-color: #f3f4f6;
+}
+
+/* Focus styles for accessibility */
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--brand-green);
+  outline-offset: 2px;
+}
+
+/* =============================================
+   MID-SIZED DESIGN SYSTEM OVERRIDES
+   ============================================= */
+
+/* Set base body font size to mid-sized (15px) */
+html, body {
+  font-size: 15px !important;
+}
+
+/* Mid-sized form inputs */
+.form-control, 
+input[type="text"], 
+input[type="email"], 
+input[type="password"], 
+input[type="number"], 
+input[type="search"],
+select.form-control {
+  font-size: 0.9rem !important;
+  padding: 0.5rem 0.75rem !important;
+  height: 38px !important;
+  border-radius: 7px !important;
+  border: 1.5px solid #d1d5db !important;
+  background-color: #ffffff !important;
+  color: #1f2937 !important;
+  box-shadow: none !important;
+  transition: all 0.15s ease-in-out !important;
+}
+
+/* Override general input styling for quantity inputs */
+input.qty-input {
+  padding: 0 !important;
+  height: 30px !important;
+  width: 38px !important;
+  font-size: 0.9rem !important;
+  border-radius: 6px !important;
+  text-align: center !important;
+}
+
+.stockCounter input {
+  padding: 0 !important;
+  height: 30px !important;
+  width: 45px !important;
+  font-size: 0.9rem !important;
+  border-radius: 6px !important;
+  text-align: center !important;
+}
+
+.form-control:focus {
+  border-color: var(--brand-green) !important;
+  box-shadow: 0 0 0 3px rgba(5, 106, 58, 0.12) !important;
+  background-color: #ffffff !important;
+}
+
+/* Mid-sized buttons */
+.btn {
+  padding: 0.5rem 1.35rem !important;
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+  border-radius: 7px !important;
+  transition: all 0.15s ease !important;
+}
+
+.btn-primary {
+  background-color: var(--brand-green) !important;
+  border-color: var(--brand-green) !important;
+}
+
+.btn-primary:hover {
+  background-color: var(--brand-green-light) !important;
+  border-color: var(--brand-green-light) !important;
+}
+
+/* Mid-sized Headings */
+h1, .h1 {
+  font-size: 1.55rem !important;
+  font-weight: 800 !important;
+  margin-bottom: 1.2rem !important;
+}
+
+h2, .h2 {
+  font-size: 1.3rem !important;
+  font-weight: 700 !important;
+  margin-bottom: 0.85rem !important;
+}
+
+h3, .h3 {
+  font-size: 1.15rem !important;
+  font-weight: 700 !important;
+  margin-bottom: 0.6rem !important;
+}
+
+h4, .h4 {
+  font-size: 1.02rem !important;
+  font-weight: 700 !important;
+  margin-bottom: 0.6rem !important;
+}
+
+h5, .h5 {
+  font-size: 0.92rem !important;
+  font-weight: 750 !important;
+}
+
+/* Mid-sized cards and panels */
+.card, .form-card, #order_summary, .bg-white.rounded.shadow-sm.p-4 {
+  padding: 1.35rem !important;
+  border-radius: 11px !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+/* Margins and paddings */
+.mb-3 { margin-bottom: 0.85rem !important; }
+.mb-4 { margin-bottom: 1.1rem !important; }
+.py-4 { padding-top: 1.6rem !important; padding-bottom: 1.6rem !important; }
+.py-5 { padding-top: 2.2rem !important; padding-bottom: 2.2rem !important; }
+
+/* Mid-sized order summaries */
+#order_summary h4 {
+  font-size: 1.1rem !important;
+  border-bottom: 1.5px solid #e5e7eb;
+  padding-bottom: 0.6rem;
+}
+
+#order_summary p {
+  font-size: 0.88rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+#order_summary h5 {
+  font-size: 1.02rem !important;
+  margin-top: 0.85rem;
+  padding-top: 0.6rem;
+  border-top: 1.5px solid #e5e7eb;
+}
+
+/* Mid-sized list groups and tables */
+.table th, .table td {
+  padding: 0.7rem 0.85rem !important;
+  font-size: 0.88rem !important;
+}
+
+.table th {
+  font-weight: 700 !important;
+  color: #374151 !important;
+}
+
+/* Ratings */
+.rating-outer {
+  font-size: 0.85rem !important;
+}
+
+/* Navigation layout adjustments */
+.app-navbar {
+  height: 56px !important;
+}
+
+.navbar-container {
+  height: 56px !important;
+}
+
+.nav-link-item {
+  font-size: 0.85rem !important;
+  padding: 0.35rem 0.75rem !important;
+}
+
+.btn-nav-logout {
+  font-size: 0.8rem !important;
+  padding: 0.3rem 0.75rem !important;
+}
+
+.navbar-logo img {
+  height: 30px !important;
+  width: auto !important;
+  object-fit: contain !important;
+}
+
+.navbar-logo span {
+  font-size: 1.12rem !important;
+}
+
+/* Mobile responsive padding and gaps */
+@media (max-width: 575px) {
+  .page-content {
+    padding: 1.1rem 0 !important;
+  }
+  .content-container {
+    padding: 0 0.85rem !important;
+  }
 }
 

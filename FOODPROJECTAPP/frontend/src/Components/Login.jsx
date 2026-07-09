@@ -30,7 +30,7 @@ const Login = () => {
           <div className="form-card">
             {/* Brand header */}
             <div className="text-center mb-4">
-              <div style={{ fontSize: "2.5rem", marginBottom: "0.5rem" }}>🧞</div>
+              <img src="/images/logo.webp" alt="Food Genie logo" style={{ height: "48px", width: "auto", objectFit: "contain", marginBottom: "0.5rem" }} onError={(e) => { e.target.style.display = 'none'; }} />
               <h1 style={{ fontSize: "1.5rem", fontWeight: 800, marginBottom: "0.25rem" }}>Welcome back</h1>
               <p style={{ color: "var(--text-muted)", fontSize: "0.88rem", margin: 0 }}>Sign in to your Food Genie account</p>
             </div>

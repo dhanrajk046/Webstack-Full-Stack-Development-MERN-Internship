@@ -5,6 +5,8 @@ import Search from "./Search";
 import "../../App.css";
 import { logout } from "../../redux/actions/userActions";
 
+import { clearFilters } from "../../redux/slices/restaurantSlice";
+
 const Header = () => {
   const location = useLocation();
   const dispatch = useDispatch();
@@ -23,6 +25,11 @@ const Header = () => {
 
   const closeMobileNav = () => setMenuOpen(false);
 
+  const handleLogoClick = () => {
+    closeMobileNav();
+    dispatch(clearFilters());
+  };
+
   return (
     <header>
       {/* ── Desktop / Tablet Navbar ── */}
@@ -30,9 +37,9 @@ const Header = () => {
         <div className="navbar-container">
           {/* Logo */}
           <div className="navbar-logo">
-            <Link to="/" onClick={closeMobileNav} style={{ display: "flex", alignItems: "center", gap: "0.5rem", textDecoration: "none" }}>
+            <Link to="/" onClick={handleLogoClick} style={{ display: "flex", alignItems: "center", gap: "0.5rem", textDecoration: "none" }}>
               <img src="/images/logo.webp" alt="Food Genie logo" onError={(e) => { e.target.style.display = 'none'; }} />
-              <span style={{ color: "#fff", fontWeight: 800, fontSize: "1.2rem", letterSpacing: "-0.01em", whiteSpace: "nowrap" }}>🧞 Food Genie</span>
+              <span style={{ color: "#fff", fontWeight: 800, fontSize: "1.2rem", letterSpacing: "-0.01em", whiteSpace: "nowrap" }}>Food Genie™</span>
             </Link>
           </div>
 

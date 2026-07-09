@@ -67,11 +67,19 @@ const foodSchema = new mongoose.Schema({
       },
     },
   ],
+  aiDescription: {
+    type: String,
+  },
   createdAt: {
     type: Date,
     default: Date.now,
   },
 });
+
+// Indexes for high performance
+foodSchema.index({ restaurant: 1 });
+foodSchema.index({ name: "text", description: "text" });
+
 module.exports = mongoose.model("FoodItem", foodSchema);
 //fooditems
 

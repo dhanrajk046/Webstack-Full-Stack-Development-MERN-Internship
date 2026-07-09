@@ -88,7 +88,7 @@ export const getRestaurants =
 
       const { data } = await api.get(`/v1/eats/stores?keyword=${keyword}`);
 
-      console.log("API Response:", data);
+
 
       dispatch(
         getRestaurantsSuccess({

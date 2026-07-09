@@ -7,21 +7,23 @@ const {
   createMenu,
   deleteMenu,
   addItemToMenu,
+  addItemAndCategory,
 } = require("../controllers/menuController");
 
 const { protect } = require("../controllers/authController");
-const { authorizeRoles } = require("../Middlewares/authorizeRoles");
+
+router.route("/manage/addItem").post(protect, addItemAndCategory);
 
 router
   .route("/")
   .get(getAllMenus)
-  .post(protect, authorizeRoles("admin"), createMenu);
+  .post(protect, createMenu);
 
 // add food item to a specific menu (more specific, must come before /:menuId)
 router
   .route("/:menuId/addItem")
-  .patch(protect, authorizeRoles("admin"), addItemToMenu);
+  .patch(protect, addItemToMenu);
 
-router.route("/:menuId").delete(protect, authorizeRoles("admin"), deleteMenu);
+router.route("/:menuId").delete(protect, deleteMenu);
 
 module.exports = router;

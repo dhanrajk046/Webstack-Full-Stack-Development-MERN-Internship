@@ -138,4 +138,8 @@ orderSchema.pre("save", async function () {
   }
 });
 
+// High performance query indexes
+orderSchema.index({ user: 1 });
+orderSchema.index({ restaurant: 1 });
+
 module.exports = mongoose.model("Order", orderSchema);

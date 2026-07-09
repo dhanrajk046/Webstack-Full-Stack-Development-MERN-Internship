@@ -11,7 +11,7 @@ const {
 
 const { protect } = require("../controllers/authController");
 const { authorizeRoles } = require("../Middlewares/authorizeRoles");
-router.route("/item").post(protect, authorizeRoles("admin"), createFoodItem);
+router.route("/item").post(protect, createFoodItem);
 
 // Search items globally
 router

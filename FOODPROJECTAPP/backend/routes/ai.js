@@ -1,18 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const authController = require("../controllers/authController");
 const aiController = require("../controllers/aiController");
 
-router.post(
-  "/generate-description",
-  authController.protect,
-  aiController.generateDescription
-);
-
-router.post(
-  "/analyze-reviews",
-  authController.protect,
-  aiController.analyzeReviews
-);
+// Public routes — no auth required so all users (logged-in or not) can access AI features
+router.post("/generate-description", aiController.generateDescription);
+router.post("/analyze-reviews", aiController.analyzeReviews);
 
 module.exports = router;

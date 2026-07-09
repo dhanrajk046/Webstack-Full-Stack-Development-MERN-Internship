@@ -9,7 +9,7 @@ exports.getAllFoodItems = catchAsync(async (req, res, next) => {
     restaurantId = { restaurant: req.params.storeId };
   }
 
-  const foodItems = await Fooditem.find(restaurantId).populate("restaurant");
+  const foodItems = await Fooditem.find(restaurantId).populate("restaurant", "-reviews");
   res.status(200).json({
     status: "success",
     results: foodItems.length,
@@ -23,7 +23,7 @@ exports.searchFoodItems = catchAsync(async (req, res, next) => {
     ? { name: { $regex: req.query.keyword, $options: "i" } }
     : {};
 
-  const items = await Fooditem.find(keyword).populate("restaurant");
+  const items = await Fooditem.find(keyword).populate("restaurant", "-reviews");
 
   res.status(200).json({
     status: "success",

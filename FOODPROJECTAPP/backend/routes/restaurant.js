@@ -19,7 +19,7 @@ const menuRoutes = require("./menu");
 router
   .route("/")
   .get(getAllRestaurants)
-  .post(protect, authorizeRoles("admin"), createRestaurant);
+  .post(protect, createRestaurant);
 
 router
   .route("/:storeId")

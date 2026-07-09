@@ -79,6 +79,7 @@ const userSlice = createSlice({
       state.error = action.payload;
     },
     updateReset: (state) => {
+      state.isupdated = false;
       state.error = null;
     },
     clearErrors: (state) => {
@@ -86,6 +87,7 @@ const userSlice = createSlice({
     },
   },
 });
+
 export const {
   userRequest,
   userSuccess,

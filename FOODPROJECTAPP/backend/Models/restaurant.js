@@ -28,8 +28,18 @@ const restaurantSchema = new mongoose.Schema(
         Comment: String,
       },
     ],
+    aiReviewSummary: {
+      sentiment: String,
+      key_pros: [String],
+      key_cons: [String],
+      ai_verdict: String,
+      lastAnalyzed: Date,
+    },
   },
   { timestamps: true },
 );
+
+// High performance search index
+restaurantSchema.index({ name: "text" });
 
 module.exports = mongoose.model("Restaurant", restaurantSchema);

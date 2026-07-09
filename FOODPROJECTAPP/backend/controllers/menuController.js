@@ -63,15 +63,17 @@ exports.getAllMenus = catchAsync(async (req, res, next) => {
     ? { restaurant: { $in: [restaurantId, restaurantObjectId] } }
     : { restaurant: restaurantId };
 
-  let foodItems = await FoodItem.find(restaurantQuery).populate("restaurant");
+  // 1. Try finding a structured Menu document first
+  let menuDocs = await Menu.find(restaurantQuery).populate("menu.items");
 
-  if (foodItems && foodItems.length > 0) {
-    menuPayload = buildPayloadFromFoodItems(foodItems);
+  if (menuDocs && menuDocs.length > 0) {
+    menuPayload = buildPayloadFromMenuDocs(menuDocs);
   } else {
-    let menuDocs = await Menu.find(restaurantQuery).populate("menu.items");
+    // 2. Fall back to raw list of food items
+    let foodItems = await FoodItem.find(restaurantQuery).populate("restaurant", "-reviews");
 
-    if (menuDocs && menuDocs.length > 0) {
-      menuPayload = buildPayloadFromMenuDocs(menuDocs);
+    if (foodItems && foodItems.length > 0) {
+      menuPayload = buildPayloadFromFoodItems(foodItems);
     }
 
     if (menuPayload.length === 0) {
@@ -90,15 +92,14 @@ exports.getAllMenus = catchAsync(async (req, res, next) => {
           ...regexes.map((regex) => ({ description: regex })),
         ];
 
-        foodItems = await FoodItem.find({ $or: orClauses }).populate(
-          "restaurant",
-        );
-
-        if (foodItems && foodItems.length > 0) {
-          menuPayload = buildPayloadFromFoodItems(foodItems);
-        } else {
-          menuDocs = await Menu.find({ $or: orClauses }).populate("menu.items");
+        menuDocs = await Menu.find({ $or: orClauses }).populate("menu.items");
+        if (menuDocs && menuDocs.length > 0) {
           menuPayload = buildPayloadFromMenuDocs(menuDocs);
+        } else {
+          foodItems = await FoodItem.find({ $or: orClauses }).populate("restaurant", "-reviews");
+          if (foodItems && foodItems.length > 0) {
+            menuPayload = buildPayloadFromFoodItems(foodItems);
+          }
         }
       }
     }
@@ -177,5 +178,60 @@ exports.addItemToMenu = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: "success",
     data: menu,
+  });
+});
+
+// ==========================================
+// ADD NEW ITEM AND CATEGORY (MANAGE MENU)
+// ==========================================
+exports.addItemAndCategory = catchAsync(async (req, res, next) => {
+  const { restaurantId, category, name, price, description, stock, image } = req.body;
+
+  if (!restaurantId || !category || !name || !price || !description || !stock) {
+    return next(new ErrorHandler("Please fill out all fields", 400));
+  }
+
+  // 1. Create the food item
+  const foodItem = await FoodItem.create({
+    name,
+    price: Number(price),
+    description,
+    stock: Number(stock),
+    restaurant: restaurantId,
+    images: [{
+      public_id: `custom_${Date.now()}`,
+      url: image || "https://images.unsplash.com/photo-1567337710282-00832b415979?w=400&auto=format&fit=crop"
+    }]
+  });
+
+  // 2. Find or create the Menu document for the restaurant
+  let menu = await Menu.findOne({ restaurant: restaurantId });
+  if (!menu) {
+    menu = await Menu.create({
+      restaurant: restaurantId,
+      menu: []
+    });
+  }
+
+  // 3. Find or create the category in the menu
+  let cat = menu.menu.find(
+    (c) => c.category.toLowerCase().trim() === category.toLowerCase().trim()
+  );
+
+  if (!cat) {
+    cat = { category: category.trim(), items: [] };
+    menu.menu.push(cat);
+  }
+
+  // 4. Add the food item reference
+  cat.items.push(foodItem._id);
+  menu.markModified("menu");
+  await menu.save();
+
+  res.status(201).json({
+    status: "success",
+    message: "Item added successfully to category!",
+    foodItem,
+    menu,
   });
 });

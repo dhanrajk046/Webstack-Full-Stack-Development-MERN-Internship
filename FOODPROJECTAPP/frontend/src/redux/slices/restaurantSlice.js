@@ -34,8 +34,9 @@ const restaurantSlice = createSlice({
     },
     createRestaurantSuccess: (state, action) => {
       state.loading = false;
-      // If you want to add the new restaurant immediately to the screen:
-      // state.restaurants.push(action.payload);
+      if (action.payload) {
+        state.restaurants.push(action.payload);
+      }
     },
     createRestaurantFail: (state, action) => {
       state.loading = false;
@@ -66,6 +67,9 @@ const restaurantSlice = createSlice({
     toggleVegOnly: (state) => {
       state.showVegOnly = !state.showVegOnly;
     },
+    clearFilters: (state) => {
+      state.showVegOnly = false;
+    },
     clearError: (state) => {
       state.error = null;
     },
@@ -86,6 +90,7 @@ export const {
   sortByRatings,
   sortByReviews,
   toggleVegOnly, 
+  clearFilters,
   clearError,
 } = restaurantSlice.actions;
 

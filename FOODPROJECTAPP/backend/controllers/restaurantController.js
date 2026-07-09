@@ -17,7 +17,7 @@ const getAllRestaurants = async (req, res) => {
         }
       : {};
 
-    const restaurants = await Restaurant.find(keyword);
+    const restaurants = await Restaurant.find(keyword).select("-reviews");
 
     res.status(200).json({
       success: true,
