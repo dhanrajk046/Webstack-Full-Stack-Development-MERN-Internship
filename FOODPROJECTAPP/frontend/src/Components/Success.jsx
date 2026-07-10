@@ -14,8 +14,10 @@ const Success = () => {
 
   useEffect(() => {
     if (!sessionId) {
-      setError("No session ID found. Cannot complete order.");
-      setLoading(false);
+      setTimeout(() => {
+        setError("No session ID found. Cannot complete order.");
+        setLoading(false);
+      }, 0);
       return;
     }
 

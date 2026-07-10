@@ -21,20 +21,24 @@ const Checkout = () => {
     country: "India",
   });
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      dispatch(fetchCart());
-    }
-  }, [dispatch, isAuthenticated]);
-
-  useEffect(() => {
+  const [prevUser, setPrevUser] = useState(null);
+  if (user !== prevUser) {
+    setPrevUser(user);
     if (user?.phoneNumber) {
       setDeliveryInfo((current) => ({
         ...current,
         phoneNo: current.phoneNo || user.phoneNumber,
       }));
     }
-  }, [user]);
+  }
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(fetchCart());
+    }
+  }, [dispatch, isAuthenticated]);
+
+
 
   const subtotal = cartItems.reduce((total, item) => {
     const foodItem = item.foodItem || item;

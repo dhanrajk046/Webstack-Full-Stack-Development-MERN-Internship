@@ -29,6 +29,14 @@ const Home = () => {
 
   const [products, setProducts] = useState([]);
   const [productsLoading, setProductsLoading] = useState(false);
+  const [prevKeyword, setPrevKeyword] = useState(keyword);
+
+  if (keyword !== prevKeyword) {
+    setPrevKeyword(keyword);
+    if (keyword) {
+      setProductsLoading(true);
+    }
+  }
 
   // Add Restaurant Modal States
   const [showAddModal, setShowAddModal] = useState(false);
@@ -94,7 +102,6 @@ const Home = () => {
   // Fetch matching food items (products) if a keyword search is active
   useEffect(() => {
     if (keyword) {
-      setProductsLoading(true);
       api
         .get(`/v1/eats/items/search?keyword=${keyword}`)
         .then(({ data }) => {
@@ -110,7 +117,9 @@ const Home = () => {
         })
         .finally(() => setProductsLoading(false));
     } else {
-      setProducts([]);
+      setTimeout(() => {
+        setProducts([]);
+      }, 0);
     }
   }, [keyword]);
 

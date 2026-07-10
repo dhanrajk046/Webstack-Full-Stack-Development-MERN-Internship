@@ -21,6 +21,12 @@ const Menu = () => {
   const [analysisError, setAnalysisError] = useState(null);
   const [restaurantInfo, setRestaurantInfo] = useState(null);
   const [restaurantLoading, setRestaurantLoading] = useState(true);
+  const [prevRestaurantId, setPrevRestaurantId] = useState(restaurantId);
+
+  if (restaurantId !== prevRestaurantId) {
+    setPrevRestaurantId(restaurantId);
+    setRestaurantLoading(true);
+  }
 
   // Add Item / Category Form State
   const [showAddModal, setShowAddModal] = useState(false);
@@ -42,7 +48,6 @@ const Menu = () => {
     if (restaurantId) {
       dispatch(getMenus(restaurantId));
 
-      setRestaurantLoading(true);
       api.get(`/v1/eats/stores/${restaurantId}`)
         .then(({ data }) => {
           if (data?.success) {

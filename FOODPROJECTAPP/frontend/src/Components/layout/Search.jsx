@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 const Search = ({ onSearch }) => {
@@ -6,9 +6,13 @@ const Search = ({ onSearch }) => {
   const [keyword, setKeyword] = useState(urlKeyword || "");
   const navigate = useNavigate();
 
-  useEffect(() => {
+  const [prevUrlKeyword, setPrevUrlKeyword] = useState(urlKeyword);
+  if (urlKeyword !== prevUrlKeyword) {
+    setPrevUrlKeyword(urlKeyword);
     setKeyword(urlKeyword || "");
-  }, [urlKeyword]);
+  }
+
+
 
   const searchHandler = (e) => {
     e.preventDefault();

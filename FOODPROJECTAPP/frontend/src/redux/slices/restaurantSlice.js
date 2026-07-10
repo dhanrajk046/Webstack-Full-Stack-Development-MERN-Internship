@@ -50,7 +50,7 @@ const restaurantSlice = createSlice({
     deleteRestaurantSuccess: (state, action) => {
       state.loading = false;
       // Filter out the deleted restaurant immediately from the screen:
-      // state.restaurants = state.restaurants.filter(res => res._id !== action.payload);
+      state.restaurants = state.restaurants.filter(res => res._id !== action.payload);
     },
     deleteRestaurantFail: (state, action) => {
       state.loading = false;

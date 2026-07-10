@@ -133,12 +133,16 @@ const MyOrders = () => {
 
   useEffect(() => {
     if (cancelSuccess) {
-      setToast({ type: "success", message: "Order cancelled successfully. Refund (if applicable) will be processed within 5–7 business days." });
-      setSelectedOrder(null);
+      setTimeout(() => {
+        setToast({ type: "success", message: "Order cancelled successfully. Refund (if applicable) will be processed within 5–7 business days." });
+        setSelectedOrder(null);
+      }, 0);
       dispatch(clearCancelState());
     }
     if (cancelError) {
-      setToast({ type: "error", message: cancelError });
+      setTimeout(() => {
+        setToast({ type: "error", message: cancelError });
+      }, 0);
       dispatch(clearCancelState());
     }
   }, [cancelSuccess, cancelError, dispatch]);

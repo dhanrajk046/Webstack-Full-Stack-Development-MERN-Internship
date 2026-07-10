@@ -54,7 +54,7 @@ export const loadUser = () => async (dispatch) => {
     dispatch(loadUserRequest());
     const { data } = await api.get("/v1/users/me");
     dispatch(loadUserSuccess(data?.data?.user || data?.user));
-  } catch (error) {
+  } catch {
     dispatch(loadUserFail());
   }
 };

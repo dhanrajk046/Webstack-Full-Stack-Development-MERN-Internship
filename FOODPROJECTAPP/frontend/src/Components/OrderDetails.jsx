@@ -32,7 +32,7 @@ const formatDate = (dateStr) => {
 };
 
 // ── Cancel Inline Panel ──────────────────────────────────────
-const CancelPanel = ({ order, onConfirm, onClose, loading }) => {
+const CancelPanel = ({ onConfirm, onClose, loading }) => {
   const [reason, setReason] = useState("");
 
   return (
@@ -117,7 +117,9 @@ const OrderDetails = () => {
       navigate("/orders");
     }
     if (cancelError) {
-      setToast({ type: "error", message: cancelError });
+      setTimeout(() => {
+        setToast({ type: "error", message: cancelError });
+      }, 0);
       dispatch(clearCancelState());
     }
   }, [cancelSuccess, cancelError, dispatch, navigate]);
@@ -148,7 +150,6 @@ const OrderDetails = () => {
   }
 
   const isCancelled = (order.orderStatus || "").toLowerCase() === "cancelled";
-  const isDelivered = (order.orderStatus || "").toLowerCase() === "delivered";
 
   return (
     <div className="container py-4">

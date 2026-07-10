@@ -21,6 +21,18 @@ const Account = () => {
     phoneNumber: "",
   });
 
+  const [prevUser, setPrevUser] = useState(null);
+  if (user !== prevUser) {
+    setPrevUser(user);
+    if (user) {
+      setFormData({
+        name: user.name || "",
+        email: user.email || "",
+        phoneNumber: user.phoneNumber || "",
+      });
+    }
+  }
+
   useEffect(() => {
     if (!isAuthenticated) {
       navigate("/users/login");
@@ -30,15 +42,6 @@ const Account = () => {
     dispatch(fetchMyOrders());
   }, [dispatch, isAuthenticated, navigate]);
 
-  useEffect(() => {
-    if (user) {
-      setFormData({
-        name: user.name || "",
-        email: user.email || "",
-        phoneNumber: user.phoneNumber || "",
-      });
-    }
-  }, [user]);
 
   // Handle profile update success or failure feedback
   useEffect(() => {
