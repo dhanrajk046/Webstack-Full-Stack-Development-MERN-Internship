@@ -2,7 +2,26 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../utils/api";
 
-const Restaurant = ({ restaurant }) => {
+const Restaurant = ({ restaurant, isSkeleton }) => {
+  if (isSkeleton) {
+    return (
+      <div className="col-12 my-2">
+        <div className="restaurant-card skeleton-card">
+          {/* Thumbnail Placeholder */}
+          <div className="restaurant-image skeleton-image skeleton-shimmer"></div>
+
+          {/* Info Placeholders */}
+          <div className="restaurant-info">
+            <div className="skeleton-title skeleton-line skeleton-shimmer"></div>
+            <div className="skeleton-address skeleton-line skeleton-shimmer"></div>
+            <div className="skeleton-rating skeleton-line skeleton-shimmer"></div>
+            <div className="skeleton-btn skeleton-line skeleton-shimmer"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const [showAI, setShowAI] = useState(false);
   const [loading, setLoading] = useState(false);
   const [aiData, setAiData] = useState(null);
@@ -53,7 +72,6 @@ const Restaurant = ({ restaurant }) => {
             className="restaurant-image"
             src={restaurant.images?.[0]?.url || "/images/placeholder.png"}
             alt={restaurant.name}
-            loading="lazy"
           />
         </Link>
 

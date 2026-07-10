@@ -17,18 +17,16 @@ const CountRestaurant = () => {
   return (
     <div className="count-banner">
       <div className="content-container">
-        {loading ? (
-          <p className="mb-0 text-white opacity-75">Fetching restaurants...</p>
-        ) : error ? (
+        {error ? (
           <p className="mb-0 text-warning">{error}</p>
         ) : (
           <>
             <h1 className="NumOfRestro">
-              {displayCount}
+              {loading ? "--" : displayCount}
               <span className="Restro"> {label} available</span>
             </h1>
             <p className="mb-0 mt-1" style={{ color: "rgba(255,255,255,0.8)", fontSize: "0.9rem" }}>
-              {showVegOnly ? "Showing pure vegetarian only" : "Your wish is our command. Order fresh, delivered fast"}
+              {loading ? "Fetching restaurants..." : (showVegOnly ? "Showing pure vegetarian only" : "Your wish is our command. Order fresh, delivered fast")}
             </p>
           </>
         )}

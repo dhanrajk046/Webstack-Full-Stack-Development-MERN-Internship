@@ -137,32 +137,33 @@ const Home = () => {
       <CountRestaurant />
 
       <div className="content-container" style={{ paddingTop: "1.25rem", paddingBottom: "3rem" }}>
-        {restaurantsLoading ? (
-          <Loader />
-        ) : restaurantsError ? (
+        {restaurantsError ? (
           <Message variant="danger">{restaurantsError}</Message>
         ) : (
           <>
             {/* Sort / Filter Bar */}
             <div className="sort-bar">
               <span className="text-muted me-auto" style={{ fontSize: "0.85rem" }}>
-                {visibleRestaurants?.length || 0} restaurants found
+                {restaurantsLoading ? "--" : (visibleRestaurants?.length || 0)} restaurants found
               </span>
               <button
                 className={`sort-btn${showVegOnly ? " active" : ""}`}
                 onClick={() => dispatch(toggleVegOnly())}
+                disabled={restaurantsLoading}
               >
                 🥗 {showVegOnly ? "All" : "Pure Veg"}
               </button>
               <button
                 className="sort-btn"
                 onClick={() => dispatch(sortByReviews())}
+                disabled={restaurantsLoading}
               >
                 📝 Reviews
               </button>
               <button
                 className="sort-btn"
                 onClick={() => dispatch(sortByRatings())}
+                disabled={restaurantsLoading}
               >
                 ⭐ Ratings
               </button>
@@ -172,6 +173,7 @@ const Home = () => {
                   className="sort-btn ms-2"
                   id="add-restaurant-btn"
                   onClick={() => setShowAddModal(true)}
+                  disabled={restaurantsLoading}
                   style={{
                     background: "linear-gradient(135deg, #f0fdf4, #dcfce7)",
                     border: "1.5px solid #86efac",
@@ -184,7 +186,7 @@ const Home = () => {
               ) : (
                 <Link
                   to="/users/login"
-                  className="sort-btn ms-2 text-decoration-none"
+                  className={`sort-btn ms-2 text-decoration-none${restaurantsLoading ? " disabled" : ""}`}
                   style={{
                     background: "#f3f4f6",
                     color: "#4b5563"
@@ -239,7 +241,11 @@ const Home = () => {
 
             {/* Restaurant List */}
             <div className="row g-0">
-              {visibleRestaurants?.length > 0 ? (
+              {restaurantsLoading ? (
+                Array.from({ length: 4 }).map((_, index) => (
+                  <Restaurant key={`skeleton-${index}`} isSkeleton={true} />
+                ))
+              ) : visibleRestaurants?.length > 0 ? (
                 visibleRestaurants.map((restaurant) => (
                   <Restaurant key={restaurant._id} restaurant={restaurant} />
                 ))
