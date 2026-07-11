@@ -1,55 +1,205 @@
-# Food Genie – Full-Stack Food Delivery Application
+🍔 AI-Powered MERN Food Delivery Application
 
-Food Genie is a robust, responsive **MERN Stack** food aggregation and delivery web application. Developed as a capstone project during the **WebStack Academy (WSA) Full-Stack Web Development Internship**, this application replicates real-world platforms like Swiggy or Zomato, allowing users to effortlessly browse local restaurants, customize orders, manage a live cart, and complete secure payments.
+A production-ready Full-Stack Food Delivery Platform built using the MERN Stack (MongoDB, Express.js, React, Node.js) with modern architecture, secure authentication, online payments, intelligent AI features, and scalable backend design.
 
----
+The application allows users to browse restaurants, order food online, make secure payments through Stripe, receive AI-generated food descriptions, analyze restaurant reviews using AI, and manage orders in real time.
 
-## 🚀 Key Features
 
-* **Secure Authentication & Profiling:** User registration, secure login via JWT, profile updates, and email-based password recovery (implemented via Mailtrap/SendGrid).
-* **Smart Restaurant Discovery:** Filter and search restaurants by cuisine, reviews, or delivery speed. Toggle quickly for "Pure Veg" options.
-* **Interactive Menu & Live Cart:** Dynamic item selection with real-time price updates, quantity modifiers, and state synchronization across views.
-* **Stripe Payment Gateway Integration:** A fully functional, secure checkout pipeline handling credit/debit card transactions safely.
-* **Comprehensive Order History:** Track previous orders, check real-time order processing statuses (e.g., Processing, Delivered), and view detailed invoices.
-* **Responsive, Modern UI:** Clean user interface optimized across desktop, tablet, and mobile devices using Bootstrap and custom CSS.
 
----
+🚀 Features
+👤 Authentication & Authorization
+JWT Authentication
+HTTP-Only Cookie Sessions
+Forgot Password & Reset Password
+Password Encryption using Bcrypt
+Role-Based Authorization (Admin/User)
 
-## 🛠️ Tech Stack
+🍽 Restaurant & Food Management
+Browse Restaurants
+Restaurant Search
+Veg / Non-Veg Filters
+Food Categories
+Food Search
+Restaurant Ratings & Reviews
 
-### Frontend
-* **React.js** (Functional Components & Hooks)
-* **Redux Toolkit** (Global State Management)
-* **Bootstrap 5** & **CSS3** (Responsive Layouts)
+🛒 Smart Shopping Cart
+Backend synchronized cart
+Quantity management
+Automatic cart updates
+Single Restaurant Cart Rule
+Automatic cart reset when switching restaurants
 
-### Backend
-* **Node.js** & **Express.js** (REST API Architecture)
-* **JSON Web Tokens (JWT)** (Secure Authorization)
-* **Bcrypt.js** (Password Hashing)
+💳 Secure Payments
+Stripe Checkout Integration
+Shipping Address Collection
+Payment Verification
+Order Creation after successful payment
+Automatic Cart Cleanup
 
-### Database & Cloud Storage
-* **MongoDB Atlas** (Cloud NoSQL Database)
-* **Cloudinary** (Optimized Image Hosting for Restaurants & Dishes)
+📦 Order Management
+Order History
+Order Details
+Order Tracking
+Order Cancellation
+Automatic Stock Restoration
 
----
+🤖 AI Features
+AI Food Description Generator (Groq Llama)
+AI Restaurant Review Sentiment Analysis
+AI Verdict Generation
+AI Pros & Cons Summary
+Automatic AI Food Image Generation
 
-## 📂 Project Architecture & Directory Structure
+📊 Performance Optimizations
+MongoDB Indexing
+Redux Toolkit State Management
+Cached AI Responses
+Optimized API Calls
+Lazy Data Fetching
 
-```text
-food-genie/
-├── backend/
-│   ├── config/          # Database connection & environment configurations
-│   ├── controllers/     # Controller functions handling core business logic
-│   ├── models/          # MongoDB schemas (User, Restaurant, Order)
-│   ├── routes/          # Express API route definitions
-│   ├── utils/           # Helper scripts (seeding scripts, JWT tokens, email handlers)
-│   └── server.js        # Backend entry point
+🏗 Tech Stack
+Frontend
+React
+Vite
+Redux Toolkit
+React Router DOM
+Axios
+React Toastify
+Font Awesome
+Backend
+Node.js
+Express.js
+MongoDB Atlas
+Mongoose
+JWT Authentication
+BcryptJS
+Cookie Parser
+Third Party Services
+Stripe
+Groq AI
+Pollinations AI
+Cloudinary
+
+📂 Project Structure
+Food-Delivery-App
 │
 ├── frontend/
-│   ├── public/          # Static assets and index.html
-│   └── src/
-│       ├── actions/     # Redux asynchronous actions (API fetching)
-│       ├── components/  # Reusable UI elements (Navbar, Footer, Cards, Loaders)
-│       ├── reducers/    # Redux reducers for state modification
-│       ├── App.js       # Main routing and application layout
-│       └── index.js     # Frontend DOM entry point
+│   ├── components/
+│   ├── pages/
+│   ├── redux/
+│   ├── hooks/
+│   └── utils/
+│
+├── backend/
+│   ├── controllers/
+│   ├── routes/
+│   ├── middleware/
+│   ├── models/
+│   ├── utils/
+│   ├── config/
+│   └── server.js
+│
+└── README.md
+
+🔒 Security Features
+JWT Authentication
+HTTP-Only Cookies
+Password Hashing (Bcrypt)
+Protected Routes
+Role-Based Access
+Password Reset Tokens
+Request Size Limiting
+Centralized Error Handling
+
+🤖 AI Integrations
+AI Food Description
+
+Generates attractive menu descriptions using Groq Llama Models and stores them in MongoDB to reduce API usage.
+
+AI Review Analyzer
+
+Analyzes restaurant reviews and generates:
+
+Overall Sentiment
+Key Pros
+Key Cons
+AI Verdict
+
+Results are cached for improved performance.
+
+AI Food Images
+
+Automatically generates food images using Pollinations AI for items without images.
+
+💳 Payment Flow
+User adds food to cart
+Checkout initiated
+Stripe Checkout Session created
+Customer completes payment
+Payment verified
+Order created
+Stock updated
+Cart cleared
+Order displayed to user
+
+📊 Database Collections
+Users
+Restaurants
+Menus
+Food Items
+Orders
+Cart
+
+⚡ API Highlights
+Authentication APIs
+Restaurant APIs
+Menu APIs
+Cart APIs
+Payment APIs
+Order APIs
+AI APIs
+
+🎯 Learning Outcomes
+
+This project demonstrates:
+
+Full-Stack Development
+REST API Design
+Authentication
+Authorization
+MongoDB Relationships
+Redux Toolkit
+Payment Gateway Integration
+AI API Integration
+State Management
+MVC Architecture
+Error Handling
+Production Ready Backend
+Cloud Database Integration
+📈 Future Improvements
+Real-Time Order Tracking
+Delivery Partner Dashboard
+Admin Analytics Dashboard
+Push Notifications
+Google Maps Integration
+WebSockets
+Docker Deployment
+Kubernetes Support
+CI/CD Pipeline
+
+👨‍💻 Author
+
+Dhanraj Kumar
+
+Full Stack Developer
+
+Django
+MERN Stack
+REST APIs
+React
+Node.js
+MongoDB
+AI Integrations
+AWS (Learning)
+
+⭐ If you found this project interesting, consider giving it a Star.
