@@ -337,9 +337,17 @@ exports.forgotPassword = catchAsyncErrors(async (req, res, next) => {
 
   await user.save({ validateBeforeSave: false });
 
-  try {
-    const resetURL = `${process.env.FRONTEND_URL}/users/resetPassword/${resetToken}`;
+  let cleanFrontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+  if (cleanFrontendUrl.endsWith("/")) {
+    cleanFrontendUrl = cleanFrontendUrl.slice(0, -1);
+  }
+  const resetURL = `${cleanFrontendUrl}/users/resetPassword/${resetToken}`;
 
+  if (process.env.NODE_ENV === "development") {
+    console.log(`[DEV MODE] Password reset URL for ${user.email}: ${resetURL}`);
+  }
+
+  try {
     await new Email(user, resetURL).sendPasswordReset();
 
     res.status(200).json({
@@ -347,6 +355,18 @@ exports.forgotPassword = catchAsyncErrors(async (req, res, next) => {
       message: "Token sent to email!",
     });
   } catch (err) {
+    console.error("Email sending failed:", err.message);
+
+    if (process.env.NODE_ENV === "development") {
+      console.log(`[DEV MODE] Responding with token directly since email sending failed.`);
+      return res.status(200).json({
+        status: "success",
+        message: "Token generated successfully (Dev fallback: check server console or use returned token).",
+        resetToken,
+        resetURL,
+      });
+    }
+
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
 

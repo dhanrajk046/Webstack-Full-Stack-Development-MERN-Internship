@@ -53,7 +53,12 @@ const Login = () => {
               </div>
 
               <div className="mb-4">
-                <label htmlFor="password_field" className="form-label">Password</label>
+                <div className="d-flex justify-content-between align-items-center mb-1">
+                  <label htmlFor="password_field" className="form-label mb-0">Password</label>
+                  <Link to="/users/forgetPassword" style={{ fontSize: "0.85rem", color: "var(--brand-green)", fontWeight: 600 }}>
+                    Forgot Password?
+                  </Link>
+                </div>
                 <input
                   id="password_field"
                   type="password"

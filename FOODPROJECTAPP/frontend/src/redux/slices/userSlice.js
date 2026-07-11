@@ -82,8 +82,36 @@ const userSlice = createSlice({
       state.isupdated = false;
       state.error = null;
     },
+    forgotPasswordRequest: (state) => {
+      state.loading = true;
+      state.error = null;
+      state.message = null;
+    },
+    forgotPasswordSuccess: (state, action) => {
+      state.loading = false;
+      state.message = action.payload;
+    },
+    forgotPasswordFail: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
+    resetPasswordRequest: (state) => {
+      state.loading = true;
+      state.error = null;
+      state.success = null;
+    },
+    resetPasswordSuccess: (state, action) => {
+      state.loading = false;
+      state.success = action.payload;
+    },
+    resetPasswordFail: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
     clearErrors: (state) => {
       state.error = null;
+      state.message = null;
+      state.success = null;
     },
   },
 });
@@ -101,6 +129,12 @@ export const {
   updateRequest,
   updateSuccess,
   updateReset,
+  forgotPasswordRequest,
+  forgotPasswordSuccess,
+  forgotPasswordFail,
+  resetPasswordRequest,
+  resetPasswordSuccess,
+  resetPasswordFail,
   clearErrors,
 } = userSlice.actions;
 

@@ -11,6 +11,12 @@ import {
   updateRequest,
   updateSuccess,
   updateFail,
+  forgotPasswordRequest,
+  forgotPasswordSuccess,
+  forgotPasswordFail,
+  resetPasswordRequest,
+  resetPasswordSuccess,
+  resetPasswordFail,
 } from "../slices/userSlice";
 import { clearCart } from "../slices/cartSlice";
 import { clearOrderState } from "../slices/orderSlice";
@@ -81,5 +87,43 @@ export const logout = () => async (dispatch) => {
     dispatch(clearOrderState());
   } catch (error) {
     dispatch(logoutFail(error.response?.data?.message || "Logout failed"));
+  }
+};
+
+// Forgot Password
+export const forgotPassword = (email) => async (dispatch) => {
+  try {
+    dispatch(forgotPasswordRequest());
+    const { data } = await api.post("/v1/users/forgetPassword", { email }, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    dispatch(forgotPasswordSuccess(data.message));
+    return data;
+  } catch (error) {
+    dispatch(forgotPasswordFail(error.response?.data?.message || "Forgot Password failed"));
+    return null;
+  }
+};
+
+// Reset Password
+export const resetPassword = (token, password, passwordConfirm) => async (dispatch) => {
+  try {
+    dispatch(resetPasswordRequest());
+    const { data } = await api.patch(`/v1/users/resetPassword/${token}`, { password, passwordConfirm }, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    dispatch(resetPasswordSuccess(data.success));
+    // Since resetting password also logs the user in, dispatch userSuccess
+    if (data?.data?.user || data?.user) {
+      dispatch(userSuccess(data?.data?.user || data?.user));
+    }
+    return data;
+  } catch (error) {
+    dispatch(resetPasswordFail(error.response?.data?.message || "Password reset failed"));
+    return null;
   }
 };

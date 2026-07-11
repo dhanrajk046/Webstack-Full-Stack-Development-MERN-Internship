@@ -10,6 +10,8 @@ import Footer from "./Components/layout/Footer";
 import Menu from "./Components/Menu";
 import Login from "./Components/Login";
 import Register from "./Components/Register";
+import ForgotPassword from "./Components/ForgotPassword";
+import ResetPassword from "./Components/ResetPassword";
 import Cart from "./Components/Cart";
 import Checkout from "./Components/Checkout";
 import OrderDetails from "./Components/OrderDetails";
@@ -44,6 +46,8 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/users/login" element={<Login />} />
               <Route path="/users/register" element={<Register />} />
+              <Route path="/users/forgetPassword" element={<ForgotPassword />} />
+              <Route path="/users/resetPassword/:token" element={<ResetPassword />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/account" element={<Account />} />
