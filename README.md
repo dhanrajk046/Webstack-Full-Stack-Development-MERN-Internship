@@ -95,14 +95,15 @@ Food-Delivery-App
 │
 └── README.md
 
-⚙️ Local Development & Setup
+##⚙️ Local Development & Setup
 Follow these steps to set up the project locally on your machine.
 
-1. Clone the repository
+##1. Clone the repository
 Bash
 git clone [https://github.com/yourusername/Food-Delivery-App.git](https://github.com/yourusername/Food-Delivery-App.git)
 cd Food-Delivery-App
-2. Install Dependencies
+
+##2. Install Dependencies
 You will need to install dependencies for both the frontend and backend.
 
 Bash
@@ -113,7 +114,8 @@ npm install
 # Install frontend dependencies
 cd ../frontend
 npm install
-3. Environment Variables
+
+##3. Environment Variables
 Create a .env file in the backend directory and add the following keys:
 
 Code snippet
@@ -123,7 +125,8 @@ JWT_SECRET=your_jwt_secret
 STRIPE_SECRET_KEY=your_stripe_secret
 GROQ_API_KEY=your_groq_api_key
 CLOUDINARY_URL=your_cloudinary_url
-4. Run the Application
+
+##4. Run the Application
 Open two separate terminal windows/tabs:
 
 Terminal 1 (Backend):
@@ -151,7 +154,7 @@ Integrating Third-Party Payment Gateways (Stripe) and AI APIs.
 
 Optimizing performance via lazy loading and API caching.
 
-📈 Future Improvements
+##📈 Future Improvements
 [ ] Real-Time Order Tracking via WebSockets
 
 [ ] Dedicated Delivery Partner Dashboard
@@ -166,7 +169,7 @@ Optimizing performance via lazy loading and API caching.
 
 [ ] CI/CD Pipeline
 
-👨‍💻 Author
+##👨‍💻 Author
 Dhanraj Kumar Full Stack Developer
 
-[Django | MERN Stack | REST APIs | React | Node.js | MongoDB | AI Integrations | AWS (Learning)]
+[ MERN Stack | REST APIs | React | Node.js | MongoDB | AI Integrations | AWS (Learning)]
