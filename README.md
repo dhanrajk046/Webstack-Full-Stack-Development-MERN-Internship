@@ -94,3 +94,79 @@ Food-Delivery-App
 │   └── server.js      # Entry point
 │
 └── README.md
+
+⚙️ Local Development & Setup
+Follow these steps to set up the project locally on your machine.
+
+1. Clone the repository
+Bash
+git clone [https://github.com/yourusername/Food-Delivery-App.git](https://github.com/yourusername/Food-Delivery-App.git)
+cd Food-Delivery-App
+2. Install Dependencies
+You will need to install dependencies for both the frontend and backend.
+
+Bash
+# Install backend dependencies
+cd backend
+npm install
+
+# Install frontend dependencies
+cd ../frontend
+npm install
+3. Environment Variables
+Create a .env file in the backend directory and add the following keys:
+
+Code snippet
+PORT=5000
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
+STRIPE_SECRET_KEY=your_stripe_secret
+GROQ_API_KEY=your_groq_api_key
+CLOUDINARY_URL=your_cloudinary_url
+4. Run the Application
+Open two separate terminal windows/tabs:
+
+Terminal 1 (Backend):
+
+Bash
+cd backend
+npm run dev
+Terminal 2 (Frontend):
+
+Bash
+cd frontend
+npm run dev
+🎯 Learning Outcomes
+Building this project demonstrated proficiency in:
+
+Designing robust REST APIs and MVC Architecture.
+
+Implementing secure, production-ready Authentication & Authorization.
+
+Handling complex MongoDB relationships, indexing, and Cloud Database Integration.
+
+Managing global state and caching efficiently with Redux Toolkit.
+
+Integrating Third-Party Payment Gateways (Stripe) and AI APIs.
+
+Optimizing performance via lazy loading and API caching.
+
+📈 Future Improvements
+[ ] Real-Time Order Tracking via WebSockets
+
+[ ] Dedicated Delivery Partner Dashboard
+
+[ ] Admin Analytics & Sales Dashboard
+
+[ ] Push Notifications for Order Updates
+
+[ ] Google Maps Integration for accurate delivery addressing
+
+[ ] Docker Deployment & Kubernetes Support
+
+[ ] CI/CD Pipeline
+
+👨‍💻 Author
+Dhanraj Kumar Full Stack Developer
+
+[Django | MERN Stack | REST APIs | React | Node.js | MongoDB | AI Integrations | AWS (Learning)]
