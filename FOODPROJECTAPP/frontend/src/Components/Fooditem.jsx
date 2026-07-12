@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faIndianRupeeSign } from "@fortawesome/free-solid-svg-icons";
 import { addItemToCart } from "../redux/actions/cartActions";
@@ -7,6 +8,7 @@ import api from "../utils/api";
 
 const Fooditem = ({ fooditem, restaurant }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { isAuthenticated } = useSelector((state) => state.user || {});
   const [quantity, setQuantity] = useState(1);
   const [showButtons, setShowButtons] = useState(false);
@@ -25,7 +27,7 @@ const Fooditem = ({ fooditem, restaurant }) => {
 
   const confirmAddToCart = async () => {
     if (!isAuthenticated) {
-      window.location.href = "/users/login";
+      navigate("/users/login", { state: { from: window.location.pathname } });
       return;
     }
 
