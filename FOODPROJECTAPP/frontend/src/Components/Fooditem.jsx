@@ -245,13 +245,12 @@ const Fooditem = ({ fooditem, restaurant }) => {
                 {isOutOfStock ? "Out of Stock" : "Add to Cart"}
               </button>
             ) : (
-              <div className="d-flex align-items-center justify-content-between gap-1 w-100" style={{ height: "32px" }}>
+              <div className="fooditem-qty-container d-flex align-items-center justify-content-between gap-1 w-100" style={{ height: "32px" }}>
                 <div className="d-flex align-items-center gap-1">
                   <button
                     type="button"
                     className="btn btn-danger btn-sm"
                     onClick={decreaseQty}
-                    style={{ padding: 0, width: "24px", height: "24px", fontSize: "0.8rem", borderRadius: "4px", display: "flex", alignItems: "center", justifyContent: "center" }}
                   >
                     −
                   </button>
@@ -260,33 +259,20 @@ const Fooditem = ({ fooditem, restaurant }) => {
                     type="text"
                     value={quantity}
                     readOnly
-                    style={{
-                      width: "18px",
-                      textAlign: "center",
-                      border: "none",
-                      fontWeight: "700",
-                      fontSize: "0.85rem",
-                      backgroundColor: "transparent",
-                      color: "#1f2937",
-                      padding: 0,
-                      outline: "none"
-                    }}
                   />
                   <button
                     type="button"
                     className="btn btn-primary btn-sm"
                     onClick={increaseQty}
-                    style={{ padding: 0, width: "24px", height: "24px", fontSize: "0.8rem", borderRadius: "4px", display: "flex", alignItems: "center", justifyContent: "center" }}
                   >
                     +
                   </button>
                 </div>
                 <button
                   type="button"
-                  className="btn btn-success btn-sm flex-fill"
+                  className="btn btn-success btn-sm"
                   onClick={confirmAddToCart}
                   disabled={cartLoading}
-                  style={{ padding: "2px 4px", fontSize: "0.78rem", height: "26px", borderRadius: "4px", fontWeight: "700", display: "flex", alignItems: "center", justifyContent: "center", whiteSpace: "nowrap" }}
                 >
                   {cartLoading ? "..." : "Add"}
                 </button>
