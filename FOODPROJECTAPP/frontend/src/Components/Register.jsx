@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { register } from "../redux/actions/userActions";
+import { clearErrors } from "../redux/slices/userSlice";
 
 const Register = () => {
   const dispatch = useDispatch();
@@ -17,6 +18,10 @@ const Register = () => {
     password: "",
     passwordConfirm: "",
   });
+
+  useEffect(() => {
+    dispatch(clearErrors());
+  }, [dispatch]);
 
   useEffect(() => {
     if (isAuthenticated) {

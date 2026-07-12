@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { login } from "../redux/actions/userActions";
+import { clearErrors } from "../redux/slices/userSlice";
 
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const { loading, error, isAuthenticated } = useSelector(
     (state) => state.user || {},
   );
@@ -13,10 +15,14 @@ const Login = () => {
   const [password, setPassword] = useState("");
 
   useEffect(() => {
+    dispatch(clearErrors());
+  }, [dispatch]);
+
+  useEffect(() => {
     if (isAuthenticated) {
-      navigate("/cart");
+      navigate(location.state?.from || "/");
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, location.state]);
 
   const submitHandler = (event) => {
     event.preventDefault();

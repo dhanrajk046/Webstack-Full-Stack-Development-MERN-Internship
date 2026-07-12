@@ -104,12 +104,22 @@ const OrderDetails = () => {
     cancelSuccess,
   } = useSelector((state) => state.orders || {});
 
-  const [showCancelPanel, setShowCancelPanel] = useState(false);
-  const [toast, setToast] = useState(null);
+  const { isAuthenticated, authChecked } = useSelector((state) => state.user || {});
 
   useEffect(() => {
-    dispatch(fetchOrderDetails(id));
-  }, [dispatch, id]);
+    if (authChecked && !isAuthenticated) {
+      navigate("/users/login", { state: { from: `/orders/${id}` } });
+    }
+  }, [authChecked, isAuthenticated, navigate, id]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(fetchOrderDetails(id));
+    }
+  }, [dispatch, id, isAuthenticated]);
+
+  const [showCancelPanel, setShowCancelPanel] = useState(false);
+  const [toast, setToast] = useState(null);
 
   useEffect(() => {
     if (cancelSuccess) {
@@ -135,7 +145,7 @@ const OrderDetails = () => {
     await dispatch(cancelOrder(order._id, reason));
   };
 
-  if (detailsLoading || !order || Object.keys(order).length === 0) {
+  if (!authChecked || detailsLoading || !order || Object.keys(order).length === 0) {
     return (
       <div className="container py-5 text-center">
         <div className="spinner-border text-success" role="status">

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchMyOrders, cancelOrder } from "../redux/actions/orderActions";
 import { clearCancelState } from "../redux/slices/orderSlice";
+import Loader from "./layout/Loader";
 
 // ── Helpers ─────────────────────────────────────────────────
 const statusClass = (status) => {
@@ -122,7 +123,7 @@ const MyOrders = () => {
   const { orders = [], listLoading, listError, cancelLoading, cancelError, cancelSuccess } = useSelector(
     (state) => state.orders || {}
   );
-  const { isAuthenticated } = useSelector((state) => state.user || {});
+  const { isAuthenticated, authChecked } = useSelector((state) => state.user || {});
 
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [toast, setToast] = useState(null);
@@ -159,6 +160,10 @@ const MyOrders = () => {
   };
 
   // ── Not logged in ──
+  if (!authChecked) {
+    return <Loader />;
+  }
+
   if (!isAuthenticated) {
     return (
       <div className="container py-5 text-center">
@@ -166,7 +171,7 @@ const MyOrders = () => {
           <div className="mb-3" style={{ fontSize: "3rem" }}>🔒</div>
           <h3>Sign in to view orders</h3>
           <p className="text-muted">Your order history will appear here once you&apos;re logged in.</p>
-          <Link to="/users/login" className="btn btn-primary mt-2">Login</Link>
+          <Link to="/users/login" state={{ from: "/orders" }} className="btn btn-primary mt-2">Login</Link>
         </div>
       </div>
     );

@@ -2,15 +2,22 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faIndianRupeeSign } from "@fortawesome/free-solid-svg-icons";
-import { addItemToCart } from "../redux/actions/cartActions";
+import { addItemToCart, updateCartQuantity, removeCartItem } from "../redux/actions/cartActions";
 import api from "../utils/api";
 
 const Fooditem = ({ fooditem, restaurant }) => {
   const dispatch = useDispatch();
   const { isAuthenticated } = useSelector((state) => state.user || {});
-  const [quantity, setQuantity] = useState(1);
-  const [showButtons, setShowButtons] = useState(false);
-  const [cartLoading, setCartLoading] = useState(false);
+
+  // Redux Cart State
+  const { cartItems = [], restaurant: cartRestaurant, loading: cartLoading } = useSelector(
+    (state) => state.cart || {}
+  );
+
+  const cartItem = cartItems.find(
+    (item) => (item.foodItem?._id || item.foodItem || item._id) === fooditem._id
+  );
+  const cartQty = cartItem ? cartItem.quantity : 0;
 
   // AI Description Generator state
   const [showAi, setShowAi] = useState(false);
@@ -18,39 +25,43 @@ const Fooditem = ({ fooditem, restaurant }) => {
   const [aiDescription, setAiDescription] = useState("");
   const [aiError, setAiError] = useState("");
 
-  const addToCartHandler = () => {
-    setShowButtons(true);
-    setQuantity(1);
-  };
-
-  const confirmAddToCart = async () => {
+  const handleAddToCart = () => {
     if (!isAuthenticated) {
       window.location.href = "/users/login";
       return;
     }
 
-    const restaurantId =
+    const currentRestaurantId =
       restaurant || fooditem.restaurant?._id || fooditem.restaurant || null;
 
-    if (!restaurantId) return;
+    if (!currentRestaurantId) return;
 
-    setCartLoading(true);
-    await dispatch(addItemToCart(fooditem._id, restaurantId, quantity));
-    setCartLoading(false);
-    setShowButtons(false);
-    setQuantity(1);
+    const cartRestaurantId = cartRestaurant?._id || cartRestaurant;
+    if (
+      cartItems.length > 0 &&
+      cartRestaurantId &&
+      cartRestaurantId.toString() !== currentRestaurantId.toString()
+    ) {
+      const confirmChange = window.confirm(
+        "Your cart contains items from a different restaurant. Adding this item will discard your current cart. Do you want to proceed?"
+      );
+      if (!confirmChange) return;
+    }
+
+    dispatch(addItemToCart(fooditem._id, currentRestaurantId, 1));
   };
 
-  const increaseQty = () => {
-    if (quantity < fooditem.stock) setQuantity(quantity + 1);
+  const handleIncrease = () => {
+    if (cartQty < fooditem.stock) {
+      dispatch(updateCartQuantity(fooditem._id, cartQty + 1));
+    }
   };
 
-  const decreaseQty = () => {
-    if (quantity > 1) {
-      setQuantity(quantity - 1);
+  const handleDecrease = () => {
+    if (cartQty > 1) {
+      dispatch(updateCartQuantity(fooditem._id, cartQty - 1));
     } else {
-      setShowButtons(false);
-      setQuantity(1);
+      dispatch(removeCartItem(fooditem._id));
     }
   };
 
@@ -233,56 +244,39 @@ const Fooditem = ({ fooditem, restaurant }) => {
 
           {/* Cart Controls */}
           <div className="mt-2">
-            {!showButtons ? (
+            {cartQty === 0 ? (
               <button
                 type="button"
                 id="cart_btn"
                 className="btn btn-primary w-100"
-                style={{ fontSize: "0.82rem", padding: "0.4rem 0.75rem", borderRadius: "20px" }}
-                disabled={isOutOfStock}
-                onClick={addToCartHandler}
+                style={{ fontSize: "0.82rem", padding: "0.45rem 0.75rem", borderRadius: "20px", height: "36px" }}
+                disabled={isOutOfStock || cartLoading}
+                onClick={handleAddToCart}
               >
-                {isOutOfStock ? "Out of Stock" : "Add to Cart"}
+                {cartLoading ? "Adding..." : (isOutOfStock ? "Out of Stock" : "Add to Cart")}
               </button>
             ) : (
-              <div className="d-flex align-items-center gap-1 w-100">
+              <div className="d-flex align-items-center justify-content-between w-100" style={{ height: "36px" }}>
                 <button
+                  type="button"
                   className="btn btn-danger btn-sm"
-                  onClick={decreaseQty}
-                  style={{ padding: "0.3rem 0.6rem", fontSize: "0.85rem", borderRadius: "8px" }}
+                  disabled={cartLoading}
+                  onClick={handleDecrease}
+                  style={{ height: "36px", width: "36px", borderRadius: "8px", fontWeight: "700", display: "flex", alignItems: "center", justifyContent: "center" }}
                 >
                   −
                 </button>
-                <input
-                  className="qty-input"
-                  type="text"
-                  value={quantity}
-                  readOnly
-                  style={{
-                    textAlign: "center",
-                    border: "1px solid #cbd5e1",
-                    borderRadius: "6px",
-                    fontWeight: "700",
-                    fontSize: "0.9rem",
-                    backgroundColor: "#ffffff",
-                    color: "#1f2937",
-                    outline: "none"
-                  }}
-                />
+                <span style={{ fontWeight: "700", fontSize: "0.95rem", color: "#1f2937" }}>
+                  {cartLoading ? "..." : cartQty}
+                </span>
                 <button
+                  type="button"
                   className="btn btn-primary btn-sm"
-                  onClick={increaseQty}
-                  style={{ padding: "0.3rem 0.6rem", fontSize: "0.85rem", borderRadius: "8px" }}
+                  disabled={cartLoading || (fooditem.stock > 0 && cartQty >= fooditem.stock)}
+                  onClick={handleIncrease}
+                  style={{ height: "36px", width: "36px", borderRadius: "8px", fontWeight: "700", display: "flex", alignItems: "center", justifyContent: "center" }}
                 >
                   +
-                </button>
-                <button
-                  className="btn btn-success btn-sm flex-fill"
-                  onClick={confirmAddToCart}
-                  disabled={cartLoading}
-                  style={{ fontSize: "0.78rem", borderRadius: "8px" }}
-                >
-                  {cartLoading ? "..." : "Add"}
                 </button>
               </div>
             )}

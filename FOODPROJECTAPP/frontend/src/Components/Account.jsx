@@ -5,11 +5,12 @@ import { fetchMyOrders } from "../redux/actions/orderActions";
 import { logout, updateProfile } from "../redux/actions/userActions";
 import { updateReset, clearErrors } from "../redux/slices/userSlice";
 import { toast } from "react-toastify";
+import Loader from "./layout/Loader";
 
 const Account = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { user, isAuthenticated, loading, error, isupdated } = useSelector(
+  const { user, isAuthenticated, loading, error, isupdated, authChecked } = useSelector(
     (state) => state.user || {},
   );
   const { orders = [], listLoading, listError } = useSelector(
@@ -34,13 +35,19 @@ const Account = () => {
   }
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      navigate("/users/login");
+    if (authChecked && !isAuthenticated) {
+      navigate("/users/login", { state: { from: "/account" } });
       return;
     }
 
-    dispatch(fetchMyOrders());
-  }, [dispatch, isAuthenticated, navigate]);
+    if (isAuthenticated) {
+      dispatch(fetchMyOrders());
+    }
+  }, [dispatch, isAuthenticated, authChecked, navigate]);
+
+  if (!authChecked || (loading && !user)) {
+    return <Loader />;
+  }
 
 
   // Handle profile update success or failure feedback

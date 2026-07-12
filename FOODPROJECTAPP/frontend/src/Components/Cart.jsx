@@ -6,13 +6,14 @@ import {
   removeCartItem,
   updateCartQuantity,
 } from "../redux/actions/cartActions";
+import Loader from "./layout/Loader";
 
 const Cart = () => {
   const dispatch = useDispatch();
   const { cartItems = [], restaurant = {}, loading, error } = useSelector(
     (state) => state.cart || {},
   );
-  const { isAuthenticated } = useSelector((state) => state.user || {});
+  const { isAuthenticated, authChecked } = useSelector((state) => state.user || {});
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -43,12 +44,16 @@ const Cart = () => {
     return total + Number(foodItem?.price || 0) * Number(item.quantity || 1);
   }, 0);
 
+  if (!authChecked) {
+    return <Loader />;
+  }
+
   if (!isAuthenticated) {
     return (
       <div className="container py-5 text-center">
         <h2>Your cart</h2>
         <p className="text-muted">Please login to view and manage your cart.</p>
-        <Link to="/users/login" className="btn btn-primary">
+        <Link to="/users/login" state={{ from: "/cart" }} className="btn btn-primary">
           Login
         </Link>
       </div>

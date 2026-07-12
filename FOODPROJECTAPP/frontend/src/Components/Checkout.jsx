@@ -4,12 +4,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchCart } from "../redux/actions/cartActions";
 import { placeOrder } from "../redux/actions/orderActions";
 import api from "../utils/api";
+import Loader from "./layout/Loader";
 
 const Checkout = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { cartItems = [], restaurant = {} } = useSelector((state) => state.cart || {});
-  const { isAuthenticated, user } = useSelector((state) => state.user || {});
+  const { isAuthenticated, user, authChecked } = useSelector((state) => state.user || {});
   const { loading, error } = useSelector((state) => state.orders || {});
   const [paymentMethod, setPaymentMethod] = useState("COD");
   const [isPaying, setIsPaying] = useState(false);
@@ -78,12 +79,16 @@ const Checkout = () => {
     }
   };
 
+  if (!authChecked) {
+    return <Loader />;
+  }
+
   if (!isAuthenticated) {
     return (
       <div className="container py-5 text-center">
         <h2>Checkout</h2>
         <p className="text-muted">Please login before placing an order.</p>
-        <Link to="/users/login" className="btn btn-primary">Login</Link>
+        <Link to="/users/login" state={{ from: "/checkout" }} className="btn btn-primary">Login</Link>
       </div>
     );
   }
