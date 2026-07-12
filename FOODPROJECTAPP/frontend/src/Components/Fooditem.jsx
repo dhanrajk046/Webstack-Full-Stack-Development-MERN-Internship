@@ -2,22 +2,15 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faIndianRupeeSign } from "@fortawesome/free-solid-svg-icons";
-import { addItemToCart, updateCartQuantity, removeCartItem } from "../redux/actions/cartActions";
+import { addItemToCart } from "../redux/actions/cartActions";
 import api from "../utils/api";
 
 const Fooditem = ({ fooditem, restaurant }) => {
   const dispatch = useDispatch();
   const { isAuthenticated } = useSelector((state) => state.user || {});
-
-  // Redux Cart State
-  const { cartItems = [], restaurant: cartRestaurant, loading: cartLoading } = useSelector(
-    (state) => state.cart || {}
-  );
-
-  const cartItem = cartItems.find(
-    (item) => (item.foodItem?._id || item.foodItem || item._id) === fooditem._id
-  );
-  const cartQty = cartItem ? cartItem.quantity : 0;
+  const [quantity, setQuantity] = useState(1);
+  const [showButtons, setShowButtons] = useState(false);
+  const [cartLoading, setCartLoading] = useState(false);
 
   // AI Description Generator state
   const [showAi, setShowAi] = useState(false);
@@ -25,43 +18,39 @@ const Fooditem = ({ fooditem, restaurant }) => {
   const [aiDescription, setAiDescription] = useState("");
   const [aiError, setAiError] = useState("");
 
-  const handleAddToCart = () => {
+  const addToCartHandler = () => {
+    setShowButtons(true);
+    setQuantity(1);
+  };
+
+  const confirmAddToCart = async () => {
     if (!isAuthenticated) {
       window.location.href = "/users/login";
       return;
     }
 
-    const currentRestaurantId =
+    const restaurantId =
       restaurant || fooditem.restaurant?._id || fooditem.restaurant || null;
 
-    if (!currentRestaurantId) return;
+    if (!restaurantId) return;
 
-    const cartRestaurantId = cartRestaurant?._id || cartRestaurant;
-    if (
-      cartItems.length > 0 &&
-      cartRestaurantId &&
-      cartRestaurantId.toString() !== currentRestaurantId.toString()
-    ) {
-      const confirmChange = window.confirm(
-        "Your cart contains items from a different restaurant. Adding this item will discard your current cart. Do you want to proceed?"
-      );
-      if (!confirmChange) return;
-    }
-
-    dispatch(addItemToCart(fooditem._id, currentRestaurantId, 1));
+    setCartLoading(true);
+    await dispatch(addItemToCart(fooditem._id, restaurantId, quantity));
+    setCartLoading(false);
+    setShowButtons(false);
+    setQuantity(1);
   };
 
-  const handleIncrease = () => {
-    if (cartQty < fooditem.stock) {
-      dispatch(updateCartQuantity(fooditem._id, cartQty + 1));
-    }
+  const increaseQty = () => {
+    if (quantity < fooditem.stock) setQuantity(quantity + 1);
   };
 
-  const handleDecrease = () => {
-    if (cartQty > 1) {
-      dispatch(updateCartQuantity(fooditem._id, cartQty - 1));
+  const decreaseQty = () => {
+    if (quantity > 1) {
+      setQuantity(quantity - 1);
     } else {
-      dispatch(removeCartItem(fooditem._id));
+      setShowButtons(false);
+      setQuantity(1);
     }
   };
 
@@ -244,39 +233,62 @@ const Fooditem = ({ fooditem, restaurant }) => {
 
           {/* Cart Controls */}
           <div className="mt-2">
-            {cartQty === 0 ? (
+            {!showButtons ? (
               <button
                 type="button"
                 id="cart_btn"
                 className="btn btn-primary w-100"
-                style={{ fontSize: "0.82rem", padding: "0.45rem 0.75rem", borderRadius: "20px", height: "36px" }}
-                disabled={isOutOfStock || cartLoading}
-                onClick={handleAddToCart}
+                style={{ fontSize: "0.82rem", padding: "0.4rem 0.75rem", borderRadius: "20px" }}
+                disabled={isOutOfStock}
+                onClick={addToCartHandler}
               >
-                {cartLoading ? "Adding..." : (isOutOfStock ? "Out of Stock" : "Add to Cart")}
+                {isOutOfStock ? "Out of Stock" : "Add to Cart"}
               </button>
             ) : (
-              <div className="d-flex align-items-center justify-content-between w-100" style={{ height: "36px" }}>
+              <div className="d-flex align-items-center justify-content-between gap-1 w-100" style={{ height: "32px" }}>
+                <div className="d-flex align-items-center gap-1">
+                  <button
+                    type="button"
+                    className="btn btn-danger btn-sm"
+                    onClick={decreaseQty}
+                    style={{ padding: 0, width: "24px", height: "24px", fontSize: "0.8rem", borderRadius: "4px", display: "flex", alignItems: "center", justifyContent: "center" }}
+                  >
+                    −
+                  </button>
+                  <input
+                    className="qty-input"
+                    type="text"
+                    value={quantity}
+                    readOnly
+                    style={{
+                      width: "18px",
+                      textAlign: "center",
+                      border: "none",
+                      fontWeight: "700",
+                      fontSize: "0.85rem",
+                      backgroundColor: "transparent",
+                      color: "#1f2937",
+                      padding: 0,
+                      outline: "none"
+                    }}
+                  />
+                  <button
+                    type="button"
+                    className="btn btn-primary btn-sm"
+                    onClick={increaseQty}
+                    style={{ padding: 0, width: "24px", height: "24px", fontSize: "0.8rem", borderRadius: "4px", display: "flex", alignItems: "center", justifyContent: "center" }}
+                  >
+                    +
+                  </button>
+                </div>
                 <button
                   type="button"
-                  className="btn btn-danger btn-sm"
+                  className="btn btn-success btn-sm flex-fill"
+                  onClick={confirmAddToCart}
                   disabled={cartLoading}
-                  onClick={handleDecrease}
-                  style={{ height: "36px", width: "36px", borderRadius: "8px", fontWeight: "700", display: "flex", alignItems: "center", justifyContent: "center" }}
+                  style={{ padding: "2px 4px", fontSize: "0.78rem", height: "26px", borderRadius: "4px", fontWeight: "700", display: "flex", alignItems: "center", justifyContent: "center", whiteSpace: "nowrap" }}
                 >
-                  −
-                </button>
-                <span style={{ fontWeight: "700", fontSize: "0.95rem", color: "#1f2937" }}>
-                  {cartLoading ? "..." : cartQty}
-                </span>
-                <button
-                  type="button"
-                  className="btn btn-primary btn-sm"
-                  disabled={cartLoading || (fooditem.stock > 0 && cartQty >= fooditem.stock)}
-                  onClick={handleIncrease}
-                  style={{ height: "36px", width: "36px", borderRadius: "8px", fontWeight: "700", display: "flex", alignItems: "center", justifyContent: "center" }}
-                >
-                  +
+                  {cartLoading ? "..." : "Add"}
                 </button>
               </div>
             )}
