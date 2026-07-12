@@ -25,6 +25,9 @@ export const login = (email, password) => async (dispatch) => {
   try {
     dispatch(userRequest());
     const { data } = await api.post("/v1/users/login", { email, password });
+    if (data?.token) {
+      localStorage.setItem("authToken", data.token);
+    }
     dispatch(userSuccess(data?.data?.user || data?.user));
     return data?.data?.user || data?.user;
   } catch (error) {
@@ -47,6 +50,9 @@ export const register = (userData) => async (dispatch) => {
         "Content-Type": "application/json",
       },
     });
+    if (data?.token) {
+      localStorage.setItem("authToken", data.token);
+    }
     dispatch(userSuccess(data?.data?.user || data?.user));
     return data?.data?.user || data?.user;
   } catch (error) {
@@ -61,6 +67,7 @@ export const loadUser = () => async (dispatch) => {
     const { data } = await api.get("/v1/users/me");
     dispatch(loadUserSuccess(data?.data?.user || data?.user));
   } catch {
+    localStorage.removeItem("authToken");
     dispatch(loadUserFail());
   }
 };
@@ -82,6 +89,7 @@ export const updateProfile = (userData) => async (dispatch) => {
 export const logout = () => async (dispatch) => {
   try {
     await api.get("/v1/users/logout");
+    localStorage.removeItem("authToken");
     dispatch(logoutSuccess());
     dispatch(clearCart());
     dispatch(clearOrderState());
@@ -116,6 +124,9 @@ export const resetPassword = (token, password, passwordConfirm) => async (dispat
         "Content-Type": "application/json",
       },
     });
+    if (data?.token) {
+      localStorage.setItem("authToken", data.token);
+    }
     dispatch(resetPasswordSuccess(data.success));
     // Since resetting password also logs the user in, dispatch userSuccess
     if (data?.data?.user || data?.user) {
