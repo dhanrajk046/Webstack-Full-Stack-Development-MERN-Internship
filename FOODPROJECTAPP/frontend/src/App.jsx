@@ -7,6 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Home from "./Components/Home";
 import Header from "./Components/layout/Header";
 import Footer from "./Components/layout/Footer";
+import ScrollToTop from "./Components/layout/ScrollToTop";
 import Menu from "./Components/Menu";
 import Login from "./Components/Login";
 import Register from "./Components/Register";
@@ -39,6 +40,7 @@ function App() {
     <>
       <ToastContainer position="bottom-right" autoClose={3000} />
       <Router>
+        <ScrollToTop />
         <div className="App" style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
           <Header />
           <main style={{ flex: 1 }}>
